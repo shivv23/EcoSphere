@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useCallback, useRef } from "react";
+import { useState, useCallback, useRef, useEffect } from "react";
 import { trpc } from "@/lib/trpc/client";
 import { Upload, FileSpreadsheet, Loader2, CheckCircle2, XCircle, AlertTriangle, History, Trash2 } from "lucide-react";
 import Papa from "papaparse";
@@ -28,6 +28,20 @@ type ImportLogEntry = {
   timestamp: string;
 };
 
+const STORAGE_KEY = "ecosphere-import-logs";
+
+function loadLogs(): ImportLogEntry[] {
+  if (typeof window === "undefined") return [];
+  try {
+    const raw = localStorage.getItem(STORAGE_KEY);
+    return raw ? JSON.parse(raw) : [];
+  } catch { return []; }
+}
+
+function saveLogs(logs: ImportLogEntry[]) {
+  try { localStorage.setItem(STORAGE_KEY, JSON.stringify(logs.slice(0, 50))); } catch {}
+}
+
 export default function ImportPage() {
   const [entity, setEntity] = useState("");
   const [csvData, setCsvData] = useState<any[]>([]);
@@ -40,21 +54,25 @@ export default function ImportPage() {
   const [parseError, setParseError] = useState("");
   const fileInputRef = useRef<HTMLInputElement>(null);
 
+  useEffect(() => { setImportLogs(loadLogs()); }, []);
+
   const importMutation = trpc.import.importData.useMutation({
     onSuccess: (result) => {
       setImportResult(result);
-      setImportLogs((prev) => [
-        {
-          id: Date.now(),
-          entity,
-          fileName,
-          totalRows: result.total,
-          importedRows: result.imported,
-          status: result.imported === result.total ? "success" : result.imported > 0 ? "partial" : "failed",
-          timestamp: new Date().toISOString(),
-        },
-        ...prev,
-      ]);
+      const newLog: ImportLogEntry = {
+        id: Date.now(),
+        entity,
+        fileName,
+        totalRows: result.total,
+        importedRows: result.imported,
+        status: result.imported === result.total ? "success" : result.imported > 0 ? "partial" : "failed",
+        timestamp: new Date().toISOString(),
+      };
+      setImportLogs((prev) => {
+        const updated = [newLog, ...prev];
+        saveLogs(updated);
+        return updated;
+      });
       setImporting(false);
     },
     onError: () => {
