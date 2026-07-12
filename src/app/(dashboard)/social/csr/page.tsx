@@ -22,6 +22,7 @@ export default function CSRActivitiesPage() {
   });
   const deleteMutation = trpc.csrActivity.delete.useMutation({
     onSuccess: () => { toast.success("Deleted"); utils.csrActivity.list.invalidate(); utils.csrActivity.stats.invalidate(); },
+    onError: (err) => toast.error(err.message || "Failed to delete"),
   });
 
   const [form, setForm] = useState({ title: "", description: "", departmentId: "", categoryId: "", location: "" });
@@ -83,7 +84,7 @@ export default function CSRActivitiesPage() {
                       <button onClick={() => approveMutation.mutate({ id: a.id, status: "REJECTED" })} className="p-1.5 rounded-lg text-red-500 hover:bg-red-50 transition-colors"><XCircle className="w-4 h-4" /></button>
                     </>
                   )}
-                  <button onClick={() => deleteMutation.mutate({ id: a.id })} className="p-1.5 rounded-lg text-gray-400 hover:text-red-500 hover:bg-red-50 transition-colors"><Trash2 className="w-4 h-4" /></button>
+                  <button onClick={() => { if (window.confirm("Are you sure you want to delete this?")) deleteMutation.mutate({ id: a.id }); }} className="p-1.5 rounded-lg text-gray-400 hover:text-red-500 hover:bg-red-50 transition-colors"><Trash2 className="w-4 h-4" /></button>
                 </div>
               </div>
             </div>

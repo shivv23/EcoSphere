@@ -12,6 +12,7 @@ export const importRouter = router({
     }))
     .mutation(async ({ ctx, input }) => {
       let imported = 0;
+      const failedRows: { row: number; error: string }[] = [];
       const { entity, data } = input;
       
       for (const row of data) {
@@ -64,12 +65,12 @@ export const importRouter = router({
             });
             imported++;
           }
-        } catch (err) {
-          // skip bad rows
+        } catch (err: any) {
+          failedRows.push({ row: imported + failedRows.length + 1, error: err.message || "Unknown error" });
         }
       }
       
-      return { imported, total: data.length };
+      return { imported, total: data.length, failed: failedRows.length, errors: failedRows };
     }),
 });
 

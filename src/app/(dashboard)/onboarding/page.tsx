@@ -3,6 +3,7 @@
 import { useState, useEffect } from "react";
 import Link from "next/link";
 import { trpc } from "@/lib/trpc/client";
+import toast from "react-hot-toast";
 import {
   Leaf,
   Building2,
@@ -128,7 +129,7 @@ export default function OnboardingPage() {
       localStorage.setItem("ecosphere-onboarding-done", "1");
       setDone(true);
     } catch (e) {
-      console.error("Failed to save:", e);
+      toast.error("Failed to save. Please try again.");
     } finally {
       setSaving(false);
     }

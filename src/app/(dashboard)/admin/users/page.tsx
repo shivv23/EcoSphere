@@ -329,7 +329,7 @@ export default function UserManagementPage() {
                         {deleteConfirm === user.id ? (
                           <div className="flex items-center gap-1">
                             <button
-                              onClick={() => deleteMutation.mutate({ id: user.id })}
+                              onClick={() => { if (window.confirm("Are you sure you want to delete this?")) deleteMutation.mutate({ id: user.id }); }}
                               className="px-2 py-1 bg-red-600 text-white rounded-lg text-xs font-medium hover:bg-red-700"
                             >
                               Confirm

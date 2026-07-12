@@ -3,6 +3,7 @@
 import { useState } from "react";
 import { trpc } from "@/lib/trpc/client";
 import { Truck, Plus, X, MapPin, Tag, Mail, User, FileText, ChevronRight, Star, AlertTriangle, Shield, Leaf, Users } from "lucide-react";
+import toast from "react-hot-toast";
 
 function ScoreGauge({ score, size = "md" }: { score: number; size?: "sm" | "md" | "lg" }) {
   const getColor = (s: number) => {
@@ -59,7 +60,7 @@ export default function SuppliersPage() {
 
   const createMut = trpc.supplier.create.useMutation({ onSuccess: () => { refetch(); setShowAdd(false); setForm({ name: "", contactEmail: "", contactPerson: "", country: "", category: "", notes: "" }); } });
   const assessMut = trpc.supplier.assess.useMutation({ onSuccess: () => { refetch(); detailQuery.refetch(); setShowAssess(false); setAssessForm({ supplierId: "", envScore: 50, socialScore: 50, govScore: 50, notes: "" }); } });
-  const deleteMut = trpc.supplier.delete.useMutation({ onSuccess: () => { refetch(); setSelectedId(null); } });
+  const deleteMut = trpc.supplier.delete.useMutation({ onSuccess: () => { refetch(); setSelectedId(null); }, onError: (err) => toast.error(err.message || "Failed to delete") });
 
   return (
     <div className="space-y-6">
@@ -225,7 +226,7 @@ export default function SuppliersPage() {
                 <button onClick={() => { setAssessForm({ ...assessForm, supplierId: detail.id }); setShowAssess(true); }} className="px-4 py-2 rounded-xl bg-violet-500 text-white text-sm font-medium hover:bg-violet-600 transition-all">
                   New Assessment
                 </button>
-                <button onClick={() => deleteMut.mutate({ id: detail.id })} className="px-4 py-2 rounded-xl bg-red-50 text-red-600 text-sm font-medium hover:bg-red-100 transition-all">
+                <button onClick={() => { if (window.confirm("Are you sure you want to delete this?")) deleteMut.mutate({ id: detail.id }); }} className="px-4 py-2 rounded-xl bg-red-50 text-red-600 text-sm font-medium hover:bg-red-100 transition-all">
                   Delete
                 </button>
               </div>

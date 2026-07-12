@@ -29,6 +29,7 @@ export default function TimelinePage() {
       setShowForm(false);
       setForm({ title: "", description: "", date: "", category: "Milestone", impact: "" });
     },
+    onError: (err) => toast.error(err.message || "Failed to add event"),
   });
   const [showForm, setShowForm] = useState(false);
   const [form, setForm] = useState({ title: "", description: "", date: "", category: "Milestone", impact: "" });

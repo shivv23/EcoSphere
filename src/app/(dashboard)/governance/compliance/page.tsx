@@ -23,6 +23,7 @@ export default function CompliancePage() {
   });
   const deleteMutation = trpc.compliance.delete.useMutation({
     onSuccess: () => { toast.success("Deleted"); utils.compliance.list.invalidate(); utils.compliance.stats.invalidate(); },
+    onError: (err) => toast.error(err.message || "Failed to delete"),
   });
 
   const [form, setForm] = useState({ title: "", description: "", severity: "MEDIUM", ownerId: "", auditId: "", dueDate: "" });
@@ -96,7 +97,7 @@ export default function CompliancePage() {
                   {issue.status !== "RESOLVED" && issue.status !== "CLOSED" && (
                     <button onClick={() => resolveMutation.mutate({ id: issue.id })} className="p-1.5 rounded-lg text-emerald-500 hover:bg-emerald-50 transition-colors"><CheckCircle className="w-4 h-4" /></button>
                   )}
-                  <button onClick={() => deleteMutation.mutate({ id: issue.id })} className="p-1.5 rounded-lg text-gray-400 hover:text-red-500 hover:bg-red-50 transition-colors"><Trash2 className="w-4 h-4" /></button>
+                  <button onClick={() => { if (window.confirm("Are you sure you want to delete this?")) deleteMutation.mutate({ id: issue.id }); }} className="p-1.5 rounded-lg text-gray-400 hover:text-red-500 hover:bg-red-50 transition-colors"><Trash2 className="w-4 h-4" /></button>
                 </div>
               </div>
             </div>

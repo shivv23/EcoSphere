@@ -177,10 +177,10 @@ export default function CategoryManagementPage() {
                     <td className="px-6 py-4 text-right">
                       {deleteConfirm === cat.id ? (
                         <div className="flex items-center justify-end gap-1">
-                          <button
-                            onClick={() => deleteMutation.mutate({ id: cat.id })}
-                            className="px-2 py-1 bg-red-600 text-white rounded-lg text-xs font-medium hover:bg-red-700"
-                          >
+                            <button
+                              onClick={() => { if (window.confirm("Are you sure you want to delete this?")) deleteMutation.mutate({ id: cat.id }); }}
+                              className="px-2 py-1 bg-red-600 text-white rounded-lg text-xs font-medium hover:bg-red-700"
+                            >
                             Confirm
                           </button>
                           <button

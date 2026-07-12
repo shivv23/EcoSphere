@@ -23,6 +23,7 @@ export default function ChallengesPage() {
   });
   const deleteMutation = trpc.challenge.delete.useMutation({
     onSuccess: () => { toast.success("Deleted"); utils.challenge.list.invalidate(); utils.challenge.stats.invalidate(); },
+    onError: (err) => toast.error(err.message || "Failed to delete"),
   });
 
   const [form, setForm] = useState({ title: "", description: "", categoryId: "", xpReward: "100", difficulty: "Medium", deadline: "" });
@@ -82,7 +83,7 @@ export default function ChallengesPage() {
                   <span className={`px-2 py-0.5 rounded-full text-xs font-medium ${statusColors[ch.status]}`}>{ch.status}</span>
                   <span className={`px-2 py-0.5 rounded-full text-xs font-medium ${diffColors[ch.difficulty] || ""}`}>{ch.difficulty}</span>
                 </div>
-                <button onClick={() => deleteMutation.mutate({ id: ch.id })} className="opacity-0 group-hover:opacity-100 p-1 rounded-lg text-red-400 hover:text-red-600 transition-all"><Trash2 className="w-3.5 h-3.5" /></button>
+                <button onClick={() => { if (window.confirm("Are you sure you want to delete this?")) deleteMutation.mutate({ id: ch.id }); }} className="opacity-0 group-hover:opacity-100 p-1 rounded-lg text-red-400 hover:text-red-600 transition-all"><Trash2 className="w-3.5 h-3.5" /></button>
               </div>
               <h3 className="font-semibold text-gray-900 mb-1">{ch.title}</h3>
               <p className="text-sm text-gray-500 line-clamp-2 mb-3">{ch.description}</p>

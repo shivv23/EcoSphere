@@ -68,8 +68,8 @@ export default function SettingsPage() {
           <div><h3 className="font-semibold text-gray-900">Organization Profile</h3><p className="text-xs text-gray-500">Configure your organization details</p></div>
         </div>
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-          <div><label className="block text-sm text-gray-700 mb-1">Organization Name</label><input type="text" value={orgName} onChange={e => setOrgName(e.target.value)} placeholder={settingsData?.organization?.name || "EcoCorp"} className="w-full px-3 py-2.5 border border-gray-200 rounded-xl text-sm focus:ring-2 focus:ring-emerald-500/50 outline-none" /></div>
-          <div><label className="block text-sm text-gray-700 mb-1">Industry</label><input type="text" value={industry} onChange={e => setIndustry(e.target.value)} placeholder={settingsData?.organization?.industry || "Technology"} className="w-full px-3 py-2.5 border border-gray-200 rounded-xl text-sm focus:ring-2 focus:ring-emerald-500/50 outline-none" /></div>
+          <div><label className="block text-sm text-gray-700 mb-1">Organization Name</label><input type="text" value={orgName} onChange={e => setOrgName(e.target.value)} placeholder={settingsData?.organization?.name || "Enter organization name"} className="w-full px-3 py-2.5 border border-gray-200 rounded-xl text-sm focus:ring-2 focus:ring-emerald-500/50 outline-none" /></div>
+          <div><label className="block text-sm text-gray-700 mb-1">Industry</label><input type="text" value={industry} onChange={e => setIndustry(e.target.value)} placeholder={settingsData?.organization?.industry || "Enter industry"} className="w-full px-3 py-2.5 border border-gray-200 rounded-xl text-sm focus:ring-2 focus:ring-emerald-500/50 outline-none" /></div>
         </div>
       </div>
 

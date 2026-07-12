@@ -15,6 +15,7 @@ export default function EmissionFactorsPage() {
   });
   const deleteMutation = trpc.emissionFactor.delete.useMutation({
     onSuccess: () => { toast.success("Deleted"); utils.emissionFactor.list.invalidate(); },
+    onError: (err) => toast.error(err.message || "Failed to delete"),
   });
 
   const [form, setForm] = useState({ name: "", source: "", factor: "", unit: "", scope: "1" });
@@ -60,7 +61,7 @@ export default function EmissionFactorsPage() {
                   <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-emerald-500 to-teal-600 flex items-center justify-center shadow-lg"><Zap className="w-5 h-5 text-white" /></div>
                   <div><h3 className="font-semibold text-gray-900">{f.name}</h3><p className="text-xs text-gray-500">{f.source}</p></div>
                 </div>
-                <button onClick={() => deleteMutation.mutate({ id: f.id })} className="opacity-0 group-hover:opacity-100 p-1.5 rounded-lg text-red-400 hover:text-red-600 hover:bg-red-50 transition-all"><Trash2 className="w-4 h-4" /></button>
+                <button onClick={() => { if (window.confirm("Are you sure you want to delete this?")) deleteMutation.mutate({ id: f.id }); }} className="opacity-0 group-hover:opacity-100 p-1.5 rounded-lg text-red-400 hover:text-red-600 hover:bg-red-50 transition-all"><Trash2 className="w-4 h-4" /></button>
               </div>
               <div className="mt-4 flex items-baseline gap-1">
                 <span className="text-2xl font-bold text-gray-900">{f.factor}</span>

@@ -38,6 +38,7 @@ export default function ThresholdsPage() {
 
   const deleteMutation = trpc.threshold.delete.useMutation({
     onSuccess: () => { toast.success("Deleted"); utils.threshold.list.invalidate(); utils.threshold.check.invalidate(); },
+    onError: (err) => toast.error(err.message || "Failed to delete"),
   });
 
   return (
@@ -162,7 +163,7 @@ export default function ThresholdsPage() {
                     </button>
                   </td>
                   <td className="px-6 py-3 text-right">
-                    <button onClick={() => deleteMutation.mutate({ id: t.id })} className="p-1.5 text-gray-400 hover:text-red-500 hover:bg-red-50 dark:hover:bg-red-900/20 rounded-lg transition">
+                    <button onClick={() => { if (window.confirm("Are you sure you want to delete this?")) deleteMutation.mutate({ id: t.id }); }} className="p-1.5 text-gray-400 hover:text-red-500 hover:bg-red-50 dark:hover:bg-red-900/20 rounded-lg transition">
                       <Trash2 className="w-4 h-4" />
                     </button>
                   </td>

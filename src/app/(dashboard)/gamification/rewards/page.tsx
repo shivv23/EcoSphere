@@ -19,6 +19,7 @@ export default function RewardsPage() {
   });
   const deleteMutation = trpc.reward.delete.useMutation({
     onSuccess: () => { toast.success("Deleted"); utils.reward.list.invalidate(); },
+    onError: (err) => toast.error(err.message || "Failed to delete"),
   });
 
   const [form, setForm] = useState({ name: "", description: "", pointsRequired: "", stock: "", category: "General" });
@@ -59,7 +60,7 @@ export default function RewardsPage() {
             <div key={r.id} className="bg-white rounded-2xl p-5 border border-gray-100 shadow-sm hover:shadow-md transition-all group">
               <div className="flex items-start justify-between mb-3">
                 <div className="w-12 h-12 rounded-xl bg-gradient-to-br from-emerald-500 to-green-600 flex items-center justify-center shadow-lg"><Gift className="w-6 h-6 text-white" /></div>
-                <button onClick={() => deleteMutation.mutate({ id: r.id })} className="opacity-0 group-hover:opacity-100 p-1.5 rounded-lg text-red-400 hover:text-red-600 hover:bg-red-50 transition-all"><Trash2 className="w-4 h-4" /></button>
+                <button onClick={() => { if (window.confirm("Are you sure you want to delete this?")) deleteMutation.mutate({ id: r.id }); }} className="opacity-0 group-hover:opacity-100 p-1.5 rounded-lg text-red-400 hover:text-red-600 hover:bg-red-50 transition-all"><Trash2 className="w-4 h-4" /></button>
               </div>
               <h3 className="font-semibold text-gray-900">{r.name}</h3>
               <p className="text-sm text-gray-500 mt-1 line-clamp-2">{r.description}</p>

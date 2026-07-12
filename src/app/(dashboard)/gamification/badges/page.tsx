@@ -15,6 +15,7 @@ export default function BadgesPage() {
   });
   const deleteMutation = trpc.badge.delete.useMutation({
     onSuccess: () => { toast.success("Deleted"); utils.badge.list.invalidate(); },
+    onError: (err) => toast.error(err.message || "Failed to delete"),
   });
 
   const [form, setForm] = useState({ name: "", description: "", icon: "🏅", xpThreshold: "0", challengeThreshold: "0", tier: "Bronze" });

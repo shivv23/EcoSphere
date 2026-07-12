@@ -19,6 +19,7 @@ export default function PoliciesPage() {
   });
   const deleteMutation = trpc.policy.delete.useMutation({
     onSuccess: () => { toast.success("Deleted"); utils.policy.list.invalidate(); },
+    onError: (err) => toast.error(err.message || "Failed to delete"),
   });
 
   const [form, setForm] = useState({ title: "", description: "", category: "General", version: "1.0" });
@@ -68,7 +69,7 @@ export default function PoliciesPage() {
                 </div>
                 <div className="flex items-center gap-2">
                   <button onClick={() => ackMutation.mutate({ policyId: p.id })} className="flex items-center gap-1.5 px-3 py-1.5 bg-emerald-50 text-emerald-600 rounded-lg text-xs font-medium hover:bg-emerald-100 transition-colors"><CheckCircle className="w-3.5 h-3.5" />Acknowledge</button>
-                  <button onClick={() => deleteMutation.mutate({ id: p.id })} className="p-1.5 rounded-lg text-gray-400 hover:text-red-500 hover:bg-red-50 transition-colors"><Trash2 className="w-4 h-4" /></button>
+                  <button onClick={() => { if (window.confirm("Are you sure you want to delete this?")) deleteMutation.mutate({ id: p.id }); }} className="p-1.5 rounded-lg text-gray-400 hover:text-red-500 hover:bg-red-50 transition-colors"><Trash2 className="w-4 h-4" /></button>
                 </div>
               </div>
             </div>

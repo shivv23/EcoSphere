@@ -1,6 +1,6 @@
 "use client";
 
-import { Bell, Search, ChevronRight, Sun, Moon } from "lucide-react";
+import { Bell, ChevronRight, Sun, Moon } from "lucide-react";
 import { usePathname } from "next/navigation";
 import Link from "next/link";
 import { useTheme } from "@/components/theme-provider";
@@ -71,14 +71,7 @@ export function Header() {
         </div>
 
         <div className="flex items-center gap-3">
-          <div className="hidden md:flex items-center gap-2 bg-gray-100 dark:bg-gray-800 rounded-xl px-4 py-2">
-            <Search className="w-4 h-4 text-gray-400" />
-            <input
-              type="text"
-              placeholder="Search..."
-              className="bg-transparent text-sm text-gray-700 dark:text-gray-200 placeholder-gray-400 outline-none w-48"
-            />
-          </div>
+
           <button
             onClick={toggle}
             className="p-2.5 rounded-xl bg-gray-100 dark:bg-gray-800 hover:bg-gray-200 dark:hover:bg-gray-700 transition-colors"
