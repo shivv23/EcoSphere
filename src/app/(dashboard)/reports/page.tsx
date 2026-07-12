@@ -127,7 +127,7 @@ export default function ReportsPage() {
       const dateStr = new Date().toISOString().split("T")[0];
       pdf.save(`EcoSphere-ESG-Report-${reportType}-${dateStr}.pdf`);
     } catch (err) {
-      console.error("PDF generation failed:", err);
+      // PDF generation failed
     } finally {
       setPdfLoading(false);
     }

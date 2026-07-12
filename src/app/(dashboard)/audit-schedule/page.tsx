@@ -95,7 +95,7 @@ const SEED_DATA: AuditSchedule[] = [
     frequency: "QUARTERLY",
     nextDate: "2026-07-15",
     department: "Operations",
-    auditor: "Sarah Chen",
+    auditor: "Safety Team",
     status: "SCHEDULED",
     description: "Comprehensive safety inspection of all facilities and equipment.",
     priority: "MEDIUM",
@@ -107,7 +107,7 @@ const SEED_DATA: AuditSchedule[] = [
     frequency: "ANNUAL",
     nextDate: "2026-09-01",
     department: "Finance",
-    auditor: "Deloitte LLP",
+    auditor: "External Auditors",
     status: "SCHEDULED",
     description: "Year-end financial statement audit by external auditors.",
     priority: "HIGH",
@@ -119,7 +119,7 @@ const SEED_DATA: AuditSchedule[] = [
     frequency: "MONTHLY",
     nextDate: "2026-07-20",
     department: "Legal",
-    auditor: "James Rivera",
+    auditor: "Compliance Officer",
     status: "SCHEDULED",
     description: "Monthly review of regulatory compliance across all departments.",
     priority: "HIGH",
@@ -131,7 +131,7 @@ const SEED_DATA: AuditSchedule[] = [
     frequency: "SEMI_ANNUAL",
     nextDate: "2026-08-10",
     department: "Procurement",
-    auditor: "Maria Lopez",
+    auditor: "Procurement Team",
     status: "SCHEDULED",
     description: "Evaluate supplier quality standards, delivery, and compliance.",
     priority: "MEDIUM",
@@ -143,7 +143,7 @@ const SEED_DATA: AuditSchedule[] = [
     frequency: "ANNUAL",
     nextDate: "2026-10-01",
     department: "Sustainability",
-    auditor: "Dr. Aisha Patel",
+    auditor: "Environmental Lead",
     status: "SCHEDULED",
     description: "Assess environmental impact and sustainability metrics.",
     priority: "HIGH",
@@ -155,7 +155,7 @@ const SEED_DATA: AuditSchedule[] = [
     frequency: "QUARTERLY",
     nextDate: "2026-07-25",
     department: "IT",
-    auditor: "Tom Nguyen",
+    auditor: "IT Security Team",
     status: "SCHEDULED",
     description: "Review data handling practices and GDPR/CCPA compliance.",
     priority: "MEDIUM",
@@ -175,7 +175,7 @@ const SEED_DATA: AuditSchedule[] = [
 ];
 
 function generateId(): string {
-  return `audit-${Date.now()}-${Math.random().toString(36).slice(2, 9)}`;
+  return `audit-${Date.now()}-${Math.floor(Date.now() * 36).toString(36).slice(-6)}`;
 }
 
 function calculateNextDate(current: string, frequency: AuditSchedule["frequency"]): string {

@@ -92,7 +92,7 @@ export default function SuppliersPage() {
             </div>
             <div>
               <label className="text-sm font-medium text-slate-700 dark:text-slate-300 mb-1 block">Contact Email</label>
-              <input value={form.contactEmail} onChange={e => setForm({ ...form, contactEmail: e.target.value })} className="w-full px-3 py-2 rounded-xl border border-slate-200 dark:border-slate-600 bg-white dark:bg-slate-700 text-slate-900 dark:text-white text-sm focus:ring-2 focus:ring-violet-500 outline-none" placeholder="email@example.com" />
+              <input value={form.contactEmail} onChange={e => setForm({ ...form, contactEmail: e.target.value })} className="w-full px-3 py-2 rounded-xl border border-slate-200 dark:border-slate-600 bg-white dark:bg-slate-700 text-slate-900 dark:text-white text-sm focus:ring-2 focus:ring-violet-500 outline-none" placeholder="supplier@company.com" />
             </div>
             <div>
               <label className="text-sm font-medium text-slate-700 dark:text-slate-300 mb-1 block">Contact Person</label>
