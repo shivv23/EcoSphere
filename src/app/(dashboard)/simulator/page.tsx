@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useMemo, useCallback } from "react";
+import { useState, useMemo, useCallback, useEffect } from "react";
 import { trpc } from "@/lib/trpc/client";
 import { cn } from "@/lib/utils";
 import {
@@ -124,6 +124,11 @@ export default function SimulatorPage() {
   const departmentScores = trpc.department.listScores.useQuery();
   const departments = trpc.department.list.useQuery();
 
+  const orgData = orgProfile.data?.organization;
+  const currentEnvW = orgData?.envWeight ?? 0.4;
+  const currentSocialW = orgData?.socialWeight ?? 0.3;
+  const currentGovW = orgData?.govWeight ?? 0.3;
+
   const [sliders, setSliders] = useState({
     envWeight: 40,
     socialWeight: 30,
@@ -134,6 +139,17 @@ export default function SimulatorPage() {
   });
 
   const [simulated, setSimulated] = useState(false);
+
+  useEffect(() => {
+    if (orgData) {
+      setSliders((prev) => ({
+        ...prev,
+        envWeight: Math.round((orgData.envWeight || 0.4) * 100),
+        socialWeight: Math.round((orgData.socialWeight || 0.3) * 100),
+        govWeight: Math.round((orgData.govWeight || 0.3) * 100),
+      }));
+    }
+  }, [orgData]);
 
   const updateSlider = useCallback(
     (id: string, value: number) => {
@@ -156,11 +172,6 @@ export default function SimulatorPage() {
       };
     }, [sliders.envWeight, sliders.socialWeight, sliders.govWeight]);
 
-  const orgData = orgProfile.data?.organization;
-  const currentEnvW = orgData?.envWeight ?? 0.4;
-  const currentSocialW = orgData?.socialWeight ?? 0.3;
-  const currentGovW = orgData?.govWeight ?? 0.3;
-
   const scores = useMemo(() => {
     if (!departmentScores.data) return [];
     return departmentScores.data as Array<{
@@ -175,7 +186,7 @@ export default function SimulatorPage() {
 
   const avgScores = useMemo(() => {
     if (scores.length === 0) {
-      return { env: 65, social: 55, gov: 70, total: 63 };
+      return { env: 0, social: 0, gov: 0, total: 0 };
     }
     const env =
       scores.reduce((sum, s) => sum + (s.environmentalScore || 0), 0) /

@@ -51,12 +51,41 @@ export const benchmarkRouter = router({
       : 0;
     const auditScore = Math.round(avgAudit._avg.score || 0);
 
+    const totalParticipations = await ctx.db.employeeParticipation.count({
+      where: { status: "APPROVED" },
+    });
+    const activeChallenges = await ctx.db.challengeParticipation.count({
+      where: { status: "APPROVED" },
+    });
+    const resolvedIssues = await ctx.db.complianceIssue.count({
+      where: { status: "RESOLVED" },
+    });
+    const deptScores = await ctx.db.departmentScore.findMany({
+      select: { totalScore: true },
+    });
+    const avgDeptScore = deptScores.length > 0
+      ? deptScores.reduce((s: number, d: any) => s + d.totalScore, 0) / deptScores.length
+      : 0;
+
+    const trainingHours = totalParticipations > 0
+      ? Math.min(80, Math.round(totalParticipations * 2))
+      : 0;
+    const renewableEnergy = policies > 0
+      ? Math.min(100, Math.round((policies / Math.max(policies + openIssues, 1)) * 100))
+      : 0;
+    const wasteDiversion = resolvedIssues > 0 || openIssues > 0
+      ? Math.min(100, Math.round((resolvedIssues / Math.max(resolvedIssues + openIssues, 1)) * 100))
+      : 0;
+    const employeeSatisfaction = avgDeptScore > 0
+      ? Math.min(100, Math.round(avgDeptScore))
+      : 0;
+
     return {
       carbonIntensity,
-      renewableEnergy: Math.min(100, Math.round(totalCSR * 8)),
-      wasteDiversion: Math.min(100, Math.round(policies * 12)),
-      employeeSatisfaction: Math.min(100, Math.round(50 + (totalCSR * 3))),
-      trainingHours: Math.round(totalUsers * 0.4),
+      renewableEnergy,
+      wasteDiversion,
+      employeeSatisfaction,
+      trainingHours,
       genderDiversity,
       policyCompliance,
       auditScore,

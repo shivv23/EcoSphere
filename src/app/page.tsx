@@ -9,10 +9,10 @@ const features = [
 ];
 
 const stats = [
-  { value: "43", label: "Routes" },
-  { value: "26", label: "tRPC Routers" },
-  { value: "30+", label: "Prisma Models" },
-  { value: "15", label: "Premium Features" },
+  { value: "47", label: "Routes" },
+  { value: "28", label: "tRPC Routers" },
+  { value: "33", label: "Prisma Models" },
+  { value: "20", label: "Premium Features" },
 ];
 
 export default function LandingPage() {
