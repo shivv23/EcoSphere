@@ -106,6 +106,8 @@ model User {
   createdActivities          CSRActivity[]
   assignedComplianceIssues   ComplianceIssue[]        @relation("ComplianceOwner")
   uploadedEvidence           Evidence[]
+  auditLogs                  AuditLog[]
+  dashboardWidgets           DashboardWidget[]
 
   @@index([departmentId])
   @@index([role])
@@ -503,4 +505,59 @@ model OrganizationProfile {
   govWeight     Float     @default(0.3)
   createdAt     DateTime  @default(now())
   updatedAt     DateTime  @updatedAt
+}
+
+model AuditLog {
+  id            String    @id @default(cuid())
+  action        String
+  entity        String
+  entityId      String?
+  details       String?
+  userId        String
+  user          User      @relation(fields: [userId], references: [id])
+  createdAt     DateTime  @default(now())
+
+  @@index([userId])
+  @@index([entity, createdAt])
+  @@index([createdAt])
+}
+
+model ThresholdConfig {
+  id            String    @id @default(cuid())
+  name          String
+  metric        String
+  threshold     Float
+  unit          String
+  severity      String    @default("MEDIUM")
+  enabled       Boolean   @default(true)
+  createdAt     DateTime  @default(now())
+  updatedAt     DateTime  @updatedAt
+}
+
+model DashboardWidget {
+  id            String    @id @default(cuid())
+  widgetId      String
+  title         String
+  type          String
+  visible       Boolean   @default(true)
+  position      Int       @default(0)
+  size          String    @default("medium")
+  userId        String
+  user          User      @relation(fields: [userId], references: [id])
+  createdAt     DateTime  @default(now())
+  updatedAt     DateTime  @updatedAt
+
+  @@unique([userId, widgetId])
+}
+
+model IndustryBenchmark {
+  id            String    @id @default(cuid())
+  industry      String
+  metric        String
+  avgValue      Float
+  topValue      Float
+  year          Int
+  createdAt     DateTime  @default(now())
+
+  @@unique([industry, metric, year])
 }

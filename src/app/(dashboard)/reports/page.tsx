@@ -1,9 +1,11 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useRef } from "react";
 import { trpc } from "@/lib/trpc/client";
-import { FileText, Download, Filter, Leaf, Users, Shield, BarChart3, Loader2, FileSpreadsheet, FileDown } from "lucide-react";
+import { FileText, Download, Filter, Leaf, Users, Shield, BarChart3, Loader2, FileSpreadsheet, FileDown, FileDown as PdfIcon } from "lucide-react";
 import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, PieChart, Pie, Cell, Legend } from "recharts";
+import { jsPDF } from "jspdf";
+import html2canvas from "html2canvas";
 
 type ReportType = "ENVIRONMENTAL" | "SOCIAL" | "GOVERNANCE" | "SUMMARY";
 
@@ -12,6 +14,8 @@ export default function ReportsPage() {
   const [startDate, setStartDate] = useState("");
   const [endDate, setEndDate] = useState("");
   const [departmentId, setDepartmentId] = useState("");
+  const [pdfLoading, setPdfLoading] = useState(false);
+  const reportRef = useRef<HTMLDivElement>(null);
 
   const { data: report, isLoading } = trpc.report.generate.useQuery({
     type: reportType,
@@ -61,13 +65,50 @@ export default function ReportsPage() {
     URL.revokeObjectURL(url);
   };
 
+  const exportPDF = async () => {
+    if (!reportRef.current || !report) return;
+    setPdfLoading(true);
+    try {
+      const canvas = await html2canvas(reportRef.current, {
+        scale: 2,
+        useCORS: true,
+        logging: false,
+        backgroundColor: "#ffffff",
+      });
+      const imgData = canvas.toDataURL("image/png");
+      const pdf = new jsPDF({
+        orientation: canvas.width > canvas.height ? "landscape" : "portrait",
+        unit: "px",
+        format: [canvas.width / 2, canvas.height / 2],
+      });
+      pdf.addImage(imgData, "PNG", 0, 0, canvas.width / 2, canvas.height / 2);
+      const dateStr = new Date().toISOString().split("T")[0];
+      pdf.save(`EcoSphere-ESG-Report-${reportType}-${dateStr}.pdf`);
+    } catch (err) {
+      console.error("PDF generation failed:", err);
+    } finally {
+      setPdfLoading(false);
+    }
+  };
+
   return (
     <div className="space-y-6">
+      <style>{`
+        @media print {
+          body * { visibility: hidden; }
+          #report-content, #report-content * { visibility: visible; }
+          #report-content { position: absolute; left: 0; top: 0; width: 100%; }
+        }
+      `}</style>
       <div className="flex items-center justify-between">
         <div><h1 className="text-2xl font-bold text-gray-900">Reports</h1><p className="text-gray-500 mt-1">Generate and export ESG reports</p></div>
         <div className="flex gap-2">
           <button onClick={exportCSV} disabled={!report} className="flex items-center gap-2 px-4 py-2 bg-emerald-50 text-emerald-600 rounded-xl text-sm font-medium hover:bg-emerald-100 transition-colors disabled:opacity-50"><FileSpreadsheet className="w-4 h-4" />Export CSV</button>
           <button onClick={exportJSON} disabled={!report} className="flex items-center gap-2 px-4 py-2 bg-blue-50 text-blue-600 rounded-xl text-sm font-medium hover:bg-blue-100 transition-colors disabled:opacity-50"><FileDown className="w-4 h-4" />Export JSON</button>
+          <button onClick={exportPDF} disabled={!report || pdfLoading} className="flex items-center gap-2 px-4 py-2 bg-red-50 text-red-600 rounded-xl text-sm font-medium hover:bg-red-100 transition-colors disabled:opacity-50">
+            {pdfLoading ? <Loader2 className="w-4 h-4 animate-spin" /> : <FileDown className="w-4 h-4" />}
+            {pdfLoading ? "Generating..." : "Download PDF"}
+          </button>
         </div>
       </div>
 
@@ -104,7 +145,7 @@ export default function ReportsPage() {
       {isLoading ? (
         <div className="bg-white rounded-2xl p-12 border border-gray-100 shadow-sm flex items-center justify-center"><Loader2 className="w-8 h-8 animate-spin text-emerald-500" /></div>
       ) : report ? (
-        <div className="space-y-6">
+        <div ref={reportRef} id="report-content" className="space-y-6">
           {/* Summary Report */}
           {report.type === "SUMMARY" && (
             <>

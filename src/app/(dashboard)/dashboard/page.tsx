@@ -27,6 +27,10 @@ import {
   CircleDot,
   Minus,
   Loader2,
+  Settings,
+  Sparkles,
+  Bell,
+  User,
 } from "lucide-react";
 import {
   AreaChart,
@@ -42,6 +46,9 @@ import {
 
   type LegendProps,
 } from "recharts";
+import { WidgetCustomizer } from "@/components/dashboard/widget-customizer";
+import { useState, useEffect } from "react";
+import Link from "next/link";
 
 const STATUS_STYLES: Record<string, { bg: string; text: string; dot: string }> = {
   PENDING: { bg: "bg-amber-50", text: "text-amber-700", dot: "bg-amber-400" },
@@ -243,8 +250,22 @@ export default function DashboardPage() {
   const overview = trpc.dashboard.overview.useQuery();
   const carbonTrend = trpc.dashboard.carbonTrend.useQuery();
   const deptScores = trpc.dashboard.departmentScores.useQuery();
+  const myStats = trpc.dashboard.myStats.useQuery();
+  const widgetsQuery = trpc.widget.list.useQuery();
+  const [customizerOpen, setCustomizerOpen] = useState(false);
+  const [onboardingDone, setOnboardingDone] = useState(true);
+
+  useEffect(() => {
+    setOnboardingDone(localStorage.getItem("ecosphere-onboarding-done") === "1");
+  }, []);
 
   const loading = overview.isLoading || carbonTrend.isLoading || deptScores.isLoading;
+
+  const widgetList = widgetsQuery.data ?? [];
+  const isVisible = (widgetId: string) => {
+    const w = widgetList.find((w) => w.widgetId === widgetId);
+    return w ? w.visible : true;
+  };
 
   if (loading) {
     return (
@@ -284,16 +305,37 @@ export default function DashboardPage() {
   return (
     <div className="min-h-screen bg-gray-50/50">
       <div className="mx-auto max-w-7xl px-4 py-8 sm:px-6 lg:px-8">
-        <div className="mb-8 animate-[fadeInUp_0.5s_ease-out]">
-          <h1 className="text-3xl font-extrabold tracking-tight text-gray-900">
-            ESG Dashboard
-          </h1>
-          <p className="mt-1 text-gray-500">
-            Real-time overview of your environmental, social, and governance performance.
-          </p>
+        <div className="mb-8 flex items-start justify-between animate-[fadeInUp_0.5s_ease-out]">
+          <div>
+            <h1 className="text-3xl font-extrabold tracking-tight text-gray-900">
+              ESG Dashboard
+            </h1>
+            <p className="mt-1 text-gray-500">
+              Real-time overview of your environmental, social, and governance performance.
+            </p>
+          </div>
+          <button
+            onClick={() => setCustomizerOpen(true)}
+            className="flex items-center gap-2 rounded-xl border border-gray-200 bg-white px-4 py-2.5 text-sm font-semibold text-gray-700 shadow-sm hover:bg-gray-50 hover:border-gray-300 transition-all"
+          >
+            <Settings className="h-4 w-4" />
+            Customize Dashboard
+          </button>
         </div>
 
+        {!onboardingDone && (
+          <div className="bg-gradient-to-r from-emerald-500 to-cyan-500 rounded-2xl p-6 text-white mb-6 animate-[fadeInUp_0.5s_ease-out]">
+            <h3 className="text-lg font-bold">Welcome to EcoSphere!</h3>
+            <p className="text-emerald-100 mt-1">Complete the onboarding setup to get started.</p>
+            <div className="flex gap-3 mt-4">
+              <Link href="/onboarding" className="px-4 py-2 bg-white text-emerald-600 rounded-xl font-semibold hover:bg-emerald-50 transition">Start Setup</Link>
+              <button onClick={() => {localStorage.setItem('ecosphere-onboarding-done','1'); setOnboardingDone(true);}} className="px-4 py-2 border border-white/30 rounded-xl hover:bg-white/10 transition">Skip</button>
+            </div>
+          </div>
+        )}
+
         <div className="grid grid-cols-1 gap-5 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-6">
+          {isVisible("kpi-carbon") && (
           <KPICard
             icon={Flame}
             label="Total Carbon Emissions"
@@ -304,6 +346,8 @@ export default function DashboardPage() {
             iconBg="bg-gradient-to-br from-emerald-500 to-emerald-600"
             delay={0}
           />
+          )}
+          {isVisible("kpi-employees") && (
           <KPICard
             icon={Users}
             label="Active Employees"
@@ -314,6 +358,8 @@ export default function DashboardPage() {
             iconBg="bg-gradient-to-br from-blue-500 to-blue-600"
             delay={60}
           />
+          )}
+          {isVisible("kpi-csr") && (
           <KPICard
             icon={Activity}
             label="CSR Activities"
@@ -324,6 +370,8 @@ export default function DashboardPage() {
             iconBg="bg-gradient-to-br from-violet-500 to-violet-600"
             delay={120}
           />
+          )}
+          {isVisible("kpi-challenges") && (
           <KPICard
             icon={Target}
             label="Open Challenges"
@@ -332,6 +380,7 @@ export default function DashboardPage() {
             iconBg="bg-gradient-to-br from-amber-500 to-amber-600"
             delay={180}
           />
+          )}
           <KPICard
             icon={AlertTriangle}
             label="Compliance Issues"
@@ -355,6 +404,7 @@ export default function DashboardPage() {
         </div>
 
         <div className="mt-8 grid grid-cols-1 gap-6 lg:grid-cols-2">
+          {isVisible("chart-carbon") && (
           <div className="animate-[fadeInUp_0.6s_ease-out_0.1s_both] rounded-2xl border border-gray-100 bg-white p-6 shadow-sm">
             <SectionHeader
               title="Carbon Emission Trends"
@@ -430,7 +480,9 @@ export default function DashboardPage() {
               )}
             </div>
           </div>
+          )}
 
+          {isVisible("chart-departments") && (
           <div className="animate-[fadeInUp_0.6s_ease-out_0.2s_both] rounded-2xl border border-gray-100 bg-white p-6 shadow-sm">
             <SectionHeader
               title="Department ESG Scores"
@@ -468,9 +520,11 @@ export default function DashboardPage() {
               )}
             </div>
           </div>
+          )}
         </div>
 
         <div className="mt-6 grid grid-cols-1 gap-6 lg:grid-cols-3">
+          {isVisible("list-activities") && (
           <div className="animate-[fadeInUp_0.6s_ease-out_0.3s_both] rounded-2xl border border-gray-100 bg-white p-6 shadow-sm lg:col-span-2">
             <SectionHeader
               title="Recent CSR Activities"
@@ -547,7 +601,9 @@ export default function DashboardPage() {
               )}
             </div>
           </div>
+          )}
 
+          {isVisible("list-top-employees") && (
           <div className="animate-[fadeInUp_0.6s_ease-out_0.35s_both] rounded-2xl border border-gray-100 bg-white p-6 shadow-sm">
             <SectionHeader
               title="Top Employees"
@@ -592,8 +648,10 @@ export default function DashboardPage() {
               )}
             </div>
           </div>
+          )}
         </div>
 
+        {isVisible("list-compliance") && (
         <div className="mt-6 animate-[fadeInUp_0.6s_ease-out_0.4s_both]">
           <div className="rounded-2xl border border-gray-100 bg-white p-6 shadow-sm">
             <SectionHeader
@@ -647,6 +705,91 @@ export default function DashboardPage() {
             </div>
           </div>
         </div>
+        )}
+
+        <div className="mt-6 animate-[fadeInUp_0.6s_ease-out_0.45s_both]">
+          <div className="rounded-2xl border border-gray-100 bg-white p-6 shadow-sm">
+            <SectionHeader
+              title="My Activity"
+              subtitle="Your personal ESG stats and recent updates"
+              icon={User}
+            />
+            <div className="mt-6 grid grid-cols-1 gap-5 sm:grid-cols-2 lg:grid-cols-4">
+              <div className="relative overflow-hidden rounded-2xl bg-gradient-to-br from-emerald-500 to-teal-500 p-5 text-white shadow-lg shadow-emerald-200">
+                <div className="absolute -right-4 -top-4 h-24 w-24 rounded-full bg-white/10" />
+                <Sparkles className="h-8 w-8 text-emerald-100" />
+                <p className="mt-3 text-3xl font-extrabold">{myStats.data?.xp ?? 0}</p>
+                <p className="mt-1 text-sm text-emerald-100 font-medium">Total XP Earned</p>
+                <div className="mt-3">
+                  <div className="flex items-center justify-between text-xs text-emerald-100 mb-1">
+                    <span>Progress to next badge</span>
+                    <span>{Math.min(100, Math.round(((myStats.data?.xp ?? 0) % 500) / 5))}%</span>
+                  </div>
+                  <div className="h-2 w-full rounded-full bg-white/20">
+                    <div className="h-2 rounded-full bg-white" style={{ width: `${Math.min(100, Math.round(((myStats.data?.xp ?? 0) % 500) / 5))}%` }} />
+                  </div>
+                </div>
+              </div>
+
+              <div className="rounded-2xl bg-gradient-to-br from-blue-500 to-indigo-500 p-5 text-white shadow-lg shadow-blue-200">
+                <Activity className="h-8 w-8 text-blue-100" />
+                <p className="mt-3 text-3xl font-extrabold">{myStats.data?.myActivities ?? 0}</p>
+                <p className="mt-1 text-sm text-blue-100 font-medium">CSR Participations</p>
+              </div>
+
+              <div className="rounded-2xl bg-gradient-to-br from-violet-500 to-purple-500 p-5 text-white shadow-lg shadow-violet-200">
+                <Target className="h-8 w-8 text-violet-100" />
+                <p className="mt-3 text-3xl font-extrabold">{myStats.data?.myChallenges ?? 0}</p>
+                <p className="mt-1 text-sm text-violet-100 font-medium">Challenges Joined</p>
+              </div>
+
+              <div className="rounded-2xl bg-gradient-to-br from-amber-500 to-orange-500 p-5 text-white shadow-lg shadow-amber-200">
+                <Award className="h-8 w-8 text-amber-100" />
+                <p className="mt-3 text-3xl font-extrabold">{myStats.data?.myBadges ?? 0}</p>
+                <p className="mt-1 text-sm text-amber-100 font-medium">Badges Earned</p>
+              </div>
+            </div>
+
+            <div className="mt-5 grid grid-cols-1 gap-5 lg:grid-cols-2">
+              <div className="rounded-xl border border-gray-100 p-4">
+                <div className="flex items-center gap-2 mb-3">
+                  <Building2 className="h-4 w-4 text-gray-400" />
+                  <p className="text-sm font-semibold text-gray-900">Department</p>
+                </div>
+                <p className="text-lg font-bold text-emerald-600">{myStats.data?.departmentName ?? "Unassigned"}</p>
+              </div>
+              <div className="rounded-xl border border-gray-100 p-4">
+                <div className="flex items-center gap-2 mb-3">
+                  <Bell className="h-4 w-4 text-gray-400" />
+                  <p className="text-sm font-semibold text-gray-900">Unread Notifications</p>
+                </div>
+                <p className="text-lg font-bold text-amber-600">{myStats.data?.myNotifications ?? 0}</p>
+              </div>
+            </div>
+
+            {myStats.data?.recentNotifications && myStats.data.recentNotifications.length > 0 && (
+              <div className="mt-5">
+                <p className="text-sm font-semibold text-gray-900 mb-3">Recent Notifications</p>
+                <div className="space-y-2">
+                  {myStats.data.recentNotifications.map((n) => (
+                    <div key={n.id} className={`flex items-start gap-3 rounded-xl border p-3 transition-colors ${n.read ? "border-gray-100 bg-gray-50/50" : "border-emerald-100 bg-emerald-50/30"}`}>
+                      <div className={`mt-0.5 h-2 w-2 flex-shrink-0 rounded-full ${n.read ? "bg-gray-300" : "bg-emerald-500"}`} />
+                      <div className="min-w-0 flex-1">
+                        <p className="text-sm font-medium text-gray-900 truncate">{n.title}</p>
+                        <p className="text-xs text-gray-500 truncate">{n.message}</p>
+                      </div>
+                      <span className="text-xs text-gray-400 flex-shrink-0">
+                        {new Date(n.createdAt).toLocaleDateString("en-US", { month: "short", day: "numeric" })}
+                      </span>
+                    </div>
+                  ))}
+                </div>
+              </div>
+            )}
+          </div>
+        </div>
+
+        <WidgetCustomizer open={customizerOpen} onClose={() => setCustomizerOpen(false)} />
 
         <style jsx global>{`
           @keyframes fadeInUp {

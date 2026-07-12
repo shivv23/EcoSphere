@@ -15,6 +15,11 @@ import { reportRouter } from "./report";
 import { notificationRouter } from "./notification";
 import { settingsRouter } from "./settings";
 import { userRouter } from "./user";
+import { importRouter } from "./import";
+import { benchmarkRouter } from "./benchmark";
+import { widgetRouter } from "./widget";
+import { auditLogRouter } from "./auditLog";
+import { thresholdRouter } from "./threshold";
 
 export const appRouter = router({
   department: departmentRouter,
@@ -33,6 +38,11 @@ export const appRouter = router({
   notification: notificationRouter,
   settings: settingsRouter,
   user: userRouter,
+  import: importRouter,
+  benchmark: benchmarkRouter,
+  widget: widgetRouter,
+  auditLog: auditLogRouter,
+  threshold: thresholdRouter,
 });
 
 export type AppRouter = typeof appRouter;

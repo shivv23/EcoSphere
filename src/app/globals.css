@@ -1,5 +1,7 @@
 @import "tailwindcss";
 
+@variant dark (&:is(.dark *));
+
 :root {
   --background: #f8fafc;
   --foreground: #0f172a;
@@ -95,3 +97,13 @@ body {
   transform: translateY(-2px);
   box-shadow: 0 12px 40px -12px rgba(0, 0, 0, 0.15);
 }
+
+/* Dark Mode */
+.dark { color-scheme: dark; }
+.dark { --background: #0f172a; --foreground: #f1f5f9; }
+.dark body { background: #0f172a; color: #f1f5f9; }
+.dark .glass { background: rgba(15,23,42,0.8); border-color: rgba(255,255,255,0.1); }
+.dark ::-webkit-scrollbar-thumb { background: #334155; }
+.dark ::-webkit-scrollbar-thumb:hover { background: #475569; }
+
+.safe-area-bottom { padding-bottom: env(safe-area-inset-bottom); }

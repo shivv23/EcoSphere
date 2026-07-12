@@ -20,6 +20,11 @@ import {
   LogOut,
   Menu,
   X,
+  Upload,
+  Award,
+  Rocket,
+  History,
+  Gauge,
 } from "lucide-react";
 import { useState } from "react";
 
@@ -66,9 +71,14 @@ const navigation = [
       { name: "Leaderboard", href: "/gamification/leaderboard" },
     ],
   },
+  { name: "Benchmarking", href: "/benchmarking", icon: Award },
   { name: "Reports", href: "/reports", icon: FileText },
+  { name: "Data Import", href: "/import", icon: Upload },
+  { name: "Audit Trail", href: "/audit-trail", icon: History },
+  { name: "Thresholds", href: "/thresholds", icon: Gauge },
   { name: "Notifications", href: "/notifications", icon: Bell },
   { name: "Settings", href: "/settings", icon: Settings },
+  { name: "Onboarding", href: "/onboarding", icon: Rocket },
 ];
 
 function SidebarContent({ onNavigate }: { onNavigate?: () => void }) {
@@ -197,7 +207,7 @@ export function Sidebar() {
       {mobileOpen && (
         <div className="lg:hidden fixed inset-0 z-50">
           <div
-            className="absolute inset-0 bg-black/60 backdrop-blur-sm"
+            className="absolute inset-0 bg-black/60 dark:bg-black/80 backdrop-blur-sm"
             onClick={() => setMobileOpen(false)}
           />
           <div className="absolute left-0 top-0 h-full w-72 bg-[#0f172a] shadow-2xl">
@@ -213,7 +223,7 @@ export function Sidebar() {
       )}
 
       {/* Desktop sidebar */}
-      <div className="hidden lg:fixed lg:inset-y-0 lg:left-0 lg:z-40 lg:flex lg:w-72 lg:flex-col bg-[#0f172a]">
+      <div className="hidden lg:fixed lg:inset-y-0 lg:left-0 lg:z-40 lg:flex lg:w-72 lg:flex-col bg-[#0f172a] dark:bg-[#0a0f1e]">
         <SidebarContent />
       </div>
     </>

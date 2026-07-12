@@ -33,4 +33,14 @@ export const dashboardRouter = router({
     const departments = await ctx.db.department.findMany({ include: { departmentScores: { orderBy: { calculatedAt: "desc" }, take: 1 } } });
     return departments.map((d) => ({ name: d.name, code: d.code, score: d.departmentScores[0]?.totalScore || 0, env: d.departmentScores[0]?.environmentalScore || 0, social: d.departmentScores[0]?.socialScore || 0, gov: d.departmentScores[0]?.governanceScore || 0 }));
   }),
+  myStats: protectedProcedure.query(async ({ ctx }) => {
+    const user = ctx.user;
+    const myActivities = await ctx.db.employeeParticipation.count({ where: { employeeId: user.id } });
+    const myChallenges = await ctx.db.challengeParticipation.count({ where: { employeeId: user.id } });
+    const myBadges = await ctx.db.badgeAssignment.count({ where: { employeeId: user.id } });
+    const myNotifications = await ctx.db.notification.count({ where: { userId: user.id, read: false } });
+    const fullUser = await ctx.db.user.findUnique({ where: { id: user.id }, select: { xp: true, name: true, department: { select: { name: true } } } });
+    const recentNotifications = await ctx.db.notification.findMany({ where: { userId: user.id }, orderBy: { createdAt: "desc" }, take: 5 });
+    return { myActivities, myChallenges, myBadges, myNotifications, xp: fullUser?.xp || 0, departmentName: fullUser?.department?.name || "Unassigned", recentNotifications };
+  }),
 });
