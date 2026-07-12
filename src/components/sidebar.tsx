@@ -2,6 +2,7 @@
 
 import Link from "next/link";
 import { usePathname } from "next/navigation";
+import { useSession } from "next-auth/react";
 import { cn } from "@/lib/utils";
 import {
   LayoutDashboard,
@@ -94,6 +95,10 @@ const navigation = [
 function SidebarContent({ onNavigate }: { onNavigate?: () => void }) {
   const pathname = usePathname();
   const [expanded, setExpanded] = useState<string | null>(null);
+  const { data: session } = useSession();
+  const userName = session?.user?.name || "User";
+  const userEmail = session?.user?.email || "";
+  const initials = userName.split(" ").map((n: string) => n[0]).join("").toUpperCase().slice(0, 2) || "U";
 
   return (
     <div className="flex flex-col h-full">
@@ -185,11 +190,11 @@ function SidebarContent({ onNavigate }: { onNavigate?: () => void }) {
       <div className="px-4 py-4 border-t border-slate-700/50">
         <div className="flex items-center gap-3 px-3 py-2 rounded-xl bg-slate-800/50">
           <div className="w-9 h-9 rounded-full bg-gradient-to-br from-emerald-400 to-cyan-400 flex items-center justify-center text-white text-sm font-bold">
-            A
+            {initials}
           </div>
           <div className="flex-1 min-w-0">
-            <p className="text-sm font-medium text-white truncate">Admin User</p>
-            <p className="text-xs text-slate-400 truncate">admin@ecosphere.com</p>
+            <p className="text-sm font-medium text-white truncate">{userName}</p>
+            <p className="text-xs text-slate-400 truncate">{userEmail}</p>
           </div>
           <button className="p-1.5 rounded-lg text-slate-400 hover:text-white hover:bg-slate-700/50 transition-colors">
             <LogOut className="w-4 h-4" />

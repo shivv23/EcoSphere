@@ -1,5 +1,8 @@
 import { router, protectedProcedure } from "@/lib/trpc/server";
 import { z } from "zod";
+import bcrypt from "bcryptjs";
+
+const DEFAULT_PASSWORD_HASH = bcrypt.hashSync("changeme123", 12);
 
 export const importRouter = router({
   importData: protectedProcedure
@@ -32,7 +35,7 @@ export const importRouter = router({
               data: {
                 name: String(row.name || row.Name || ""),
                 email: String(row.email || row.Email || ""),
-                password: "$2a$12$LJ3m4ys4Lg.Ky0VbVvGJUeKJGz3GqJqN9Y8vGzQxPpK7G5B2hC1iG",
+                password: DEFAULT_PASSWORD_HASH,
                 role: (String(row.role || row.Role || "EMPLOYEE") as "ADMIN" | "MANAGER" | "EMPLOYEE"),
                 departmentId: String(row.departmentId || row.department_id || ""),
               },
@@ -69,3 +72,4 @@ export const importRouter = router({
       return { imported, total: data.length };
     }),
 });
+

@@ -53,11 +53,14 @@ export const timelineRouter = router({
       });
     }
 
-    events.push(
-      { id: "milestone-founding", title: "EcoSphere ESG Program Founded", description: "Company committed to comprehensive Environmental, Social, and Governance framework", date: new Date(2024, 6, 1), category: "Milestone", impact: "Corporate ESG commitment", icon: "star" },
-      { id: "milestone-iso", title: "ISO 14001 Certification Achieved", description: "Environmental Management System certified to ISO 14001 standards", date: new Date(2025, 3, 15), category: "Compliance", impact: "International standard compliance", icon: "award" },
-      { id: "milestone-net-zero", title: "Net Zero Pledge Announced", description: "Committed to achieving net-zero carbon emissions by 2035", date: new Date(2025, 9, 1), category: "Environmental", impact: "Long-term sustainability goal", icon: "target" }
-    );
+    const savedEvents = await ctx.db.timelineEvent.findMany({ orderBy: { date: "desc" }, take: 20 });
+    savedEvents.forEach(e => {
+      events.push({
+        id: e.id, title: e.title, description: e.description,
+        date: e.date, category: e.category, impact: e.impact || "",
+        icon: "star"
+      });
+    });
 
     events.sort((a, b) => b.date.getTime() - a.date.getTime());
     return events;

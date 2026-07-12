@@ -151,7 +151,7 @@ export default function BenchmarkingPage() {
               </div>
             </div>
             <div className="mt-4">
-              <p className="text-3xl font-bold tracking-tight text-gray-900">8</p>
+              <p className="text-3xl font-bold tracking-tight text-gray-900">{METRIC_KEYS.length}</p>
               <p className="mt-1 text-sm font-medium text-gray-500">Metrics Tracked</p>
             </div>
           </div>
@@ -162,7 +162,7 @@ export default function BenchmarkingPage() {
               </div>
             </div>
             <div className="mt-4">
-              <p className="text-3xl font-bold tracking-tight text-gray-900">2026</p>
+              <p className="text-3xl font-bold tracking-tight text-gray-900">{new Date().getFullYear()}</p>
               <p className="mt-1 text-sm font-medium text-gray-500">Benchmark Year</p>
             </div>
           </div>

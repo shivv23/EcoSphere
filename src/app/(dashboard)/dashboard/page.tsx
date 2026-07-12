@@ -251,6 +251,7 @@ export default function DashboardPage() {
   const carbonTrend = trpc.dashboard.carbonTrend.useQuery();
   const deptScores = trpc.dashboard.departmentScores.useQuery();
   const myStats = trpc.dashboard.myStats.useQuery();
+  const trends = trpc.dashboard.trends.useQuery();
   const widgetsQuery = trpc.widget.list.useQuery();
   const [customizerOpen, setCustomizerOpen] = useState(false);
   const [onboardingDone, setOnboardingDone] = useState(true);
@@ -340,8 +341,8 @@ export default function DashboardPage() {
             icon={Flame}
             label="Total Carbon Emissions"
             value={`${((d?.totalCarbonEmissions ?? 0) / 1000).toFixed(1)}k`}
-            trend="down"
-            trendLabel="12%"
+            trend={trends.data?.carbonTrend !== undefined ? (trends.data.carbonTrend > 0 ? "up" : "down") : undefined}
+            trendLabel={trends.data?.carbonTrend !== undefined ? `${Math.abs(trends.data.carbonTrend)}%` : undefined}
             gradient="bg-gradient-to-r from-emerald-500 to-emerald-400"
             iconBg="bg-gradient-to-br from-emerald-500 to-emerald-600"
             delay={0}
@@ -352,8 +353,6 @@ export default function DashboardPage() {
             icon={Users}
             label="Active Employees"
             value={d?.totalUsers ?? 0}
-            trend="up"
-            trendLabel="8%"
             gradient="bg-gradient-to-r from-blue-500 to-blue-400"
             iconBg="bg-gradient-to-br from-blue-500 to-blue-600"
             delay={60}
@@ -364,8 +363,8 @@ export default function DashboardPage() {
             icon={Activity}
             label="CSR Activities"
             value={d?.totalCSR ?? 0}
-            trend="up"
-            trendLabel="23%"
+            trend={trends.data?.csrTrend !== undefined ? (trends.data.csrTrend > 0 ? "up" : "down") : undefined}
+            trendLabel={trends.data?.csrTrend !== undefined ? `${Math.abs(trends.data.csrTrend)}%` : undefined}
             gradient="bg-gradient-to-r from-violet-500 to-violet-400"
             iconBg="bg-gradient-to-br from-violet-500 to-violet-600"
             delay={120}
@@ -385,8 +384,8 @@ export default function DashboardPage() {
             icon={AlertTriangle}
             label="Compliance Issues"
             value={d?.openIssues ?? 0}
-            trend="down"
-            trendLabel="5%"
+            trend={trends.data?.issueTrend !== undefined ? (trends.data.issueTrend > 0 ? "up" : "down") : undefined}
+            trendLabel={trends.data?.issueTrend !== undefined ? `${Math.abs(trends.data.issueTrend)}%` : undefined}
             gradient="bg-gradient-to-r from-red-500 to-red-400"
             iconBg="bg-gradient-to-br from-red-500 to-red-600"
             delay={240}
@@ -396,7 +395,7 @@ export default function DashboardPage() {
             label="Average ESG Score"
             value={esgScore}
             trend="up"
-            trendLabel="3pts"
+            trendLabel={`${esgScore} pts`}
             gradient="bg-gradient-to-r from-teal-500 to-teal-400"
             iconBg="bg-gradient-to-br from-teal-500 to-teal-600"
             delay={300}
