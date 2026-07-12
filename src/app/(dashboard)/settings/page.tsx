@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { trpc } from "@/lib/trpc/client";
 import { Settings, Save, Loader2, Building2, Bell, Calculator, Shield, Users } from "lucide-react";
 import toast from "react-hot-toast";
@@ -25,6 +25,23 @@ export default function SettingsPage() {
   const [envWeight, setEnvWeight] = useState("40");
   const [socialWeight, setSocialWeight] = useState("30");
   const [govWeight, setGovWeight] = useState("30");
+
+  useEffect(() => {
+    if (settingsData) {
+      if (settingsData.organization) {
+        setOrgName(settingsData.organization.name || "");
+        setIndustry(settingsData.organization.industry || "");
+        setEnvWeight(String(Math.round((settingsData.organization.envWeight || 0.4) * 100)));
+        setSocialWeight(String(Math.round((settingsData.organization.socialWeight || 0.3) * 100)));
+        setGovWeight(String(Math.round((settingsData.organization.govWeight || 0.3) * 100)));
+      }
+      if (settingsData.settings) {
+        setAutoEmission(settingsData.settings.auto_emission_calculation === "true");
+        setEvidenceRequired(settingsData.settings.evidence_required === "true");
+        setBadgeAutoAward(settingsData.settings.badge_auto_award === "true");
+      }
+    }
+  }, [settingsData]);
 
   const handleSaveOrg = () => {
     updateOrg.mutate({

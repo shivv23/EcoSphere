@@ -247,9 +247,9 @@ function rankColor(i: number) {
 }
 
 export default function DashboardPage() {
-  const overview = trpc.dashboard.overview.useQuery();
-  const carbonTrend = trpc.dashboard.carbonTrend.useQuery();
-  const deptScores = trpc.dashboard.departmentScores.useQuery();
+  const overview = trpc.dashboard.overview.useQuery(undefined, { refetchInterval: 60000 });
+  const carbonTrend = trpc.dashboard.carbonTrend.useQuery(undefined, { refetchInterval: 120000 });
+  const deptScores = trpc.dashboard.departmentScores.useQuery(undefined, { refetchInterval: 120000 });
   const myStats = trpc.dashboard.myStats.useQuery();
   const trends = trpc.dashboard.trends.useQuery();
   const widgetsQuery = trpc.widget.list.useQuery();

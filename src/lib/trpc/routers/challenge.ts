@@ -1,5 +1,6 @@
 import { router, protectedProcedure } from "@/lib/trpc/server";
 import { z } from "zod";
+import { checkAndAwardBadges } from "@/lib/scoring";
 
 export const challengeRouter = router({
   list: protectedProcedure.input(z.object({ status: z.enum(["DRAFT", "ACTIVE", "UNDER_REVIEW", "COMPLETED", "ARCHIVED"]).optional() }).optional()).query(async ({ ctx, input }) => {
@@ -21,11 +22,34 @@ export const challengeRouter = router({
       update: {},
     });
   }),
+  participations: protectedProcedure.input(z.object({ challengeId: z.string().optional() })).query(async ({ ctx, input }) => {
+    const where: any = {};
+    if (input.challengeId) where.challengeId = input.challengeId;
+    return ctx.db.challengeParticipation.findMany({
+      where,
+      include: { employee: true, challenge: true },
+      orderBy: { createdAt: "desc" as any },
+    });
+  }),
   approve: protectedProcedure.input(z.object({ id: z.string(), status: z.enum(["APPROVED", "REJECTED"]), xpAwarded: z.number().optional() })).mutation(async ({ ctx, input }) => {
     const participation = await ctx.db.challengeParticipation.update({ where: { id: input.id }, data: { status: input.status, xpAwarded: input.xpAwarded || 0, completedAt: input.status === "APPROVED" ? new Date() : null } });
     if (input.status === "APPROVED" && input.xpAwarded) {
       await ctx.db.user.update({ where: { id: participation.employeeId }, data: { xp: { increment: input.xpAwarded } } });
+      await checkAndAwardBadges(participation.employeeId);
     }
+
+    await ctx.db.notification.create({
+      data: {
+        userId: participation.employeeId,
+        title: input.status === "APPROVED" ? "Challenge Approved" : "Challenge Rejected",
+        message: input.status === "APPROVED"
+          ? `Your challenge participation was approved! +${input.xpAwarded || 0} XP awarded.`
+          : `Your challenge participation was rejected.`,
+        type: input.status === "APPROVED" ? "CHALLENGE_APPROVED" : "CHALLENGE_REJECTED",
+        link: "/gamification/challenges",
+      },
+    });
+
     return participation;
   }),
   stats: protectedProcedure.query(async ({ ctx }) => {

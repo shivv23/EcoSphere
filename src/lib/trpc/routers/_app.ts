@@ -1,4 +1,5 @@
 import { router } from "@/lib/trpc/server";
+import { goalRouter } from "./goal";
 import { departmentRouter } from "./department";
 import { categoryRouter } from "./category";
 import { emissionFactorRouter } from "./emissionFactor";
@@ -27,6 +28,7 @@ import { offsetRouter } from "./offset";
 import { calendarRouter } from "./calendar";
 
 export const appRouter = router({
+  goal: goalRouter,
   department: departmentRouter,
   category: categoryRouter,
   emissionFactor: emissionFactorRouter,

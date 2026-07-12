@@ -100,3 +100,14 @@ export async function checkAndAwardBadges(employeeId: string) {
     }
   }
 }
+
+export async function recalculateScores() {
+  const departments = await db.department.findMany();
+  const now = new Date();
+  const month = now.getMonth() + 1;
+  const year = now.getFullYear();
+  const results = await Promise.all(
+    departments.map((d) => calculateDepartmentScores(d.id, month, year))
+  );
+  return results;
+}

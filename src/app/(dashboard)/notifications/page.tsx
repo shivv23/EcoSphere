@@ -26,8 +26,8 @@ const typeColors: Record<string, string> = {
 };
 
 export default function NotificationsPage() {
-  const { data: notifications, isLoading } = trpc.notification.list.useQuery();
-  const { data: unreadCount } = trpc.notification.unreadCount.useQuery();
+  const { data: notifications, isLoading } = trpc.notification.list.useQuery(undefined, { refetchInterval: 15000 });
+  const { data: unreadCount } = trpc.notification.unreadCount.useQuery(undefined, { refetchInterval: 15000 });
   const utils = trpc.useUtils();
 
   const markRead = trpc.notification.markRead.useMutation({

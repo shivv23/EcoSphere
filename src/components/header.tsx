@@ -4,6 +4,7 @@ import { Bell, Search, ChevronRight, Sun, Moon } from "lucide-react";
 import { usePathname } from "next/navigation";
 import Link from "next/link";
 import { useTheme } from "@/components/theme-provider";
+import { trpc } from "@/lib/trpc/client";
 
 const pageNames: Record<string, string> = {
   "/dashboard": "Dashboard",
@@ -27,11 +28,16 @@ const pageNames: Record<string, string> = {
   "/reports": "Reports",
   "/notifications": "Notifications",
   "/settings": "Settings",
+  "/admin": "Admin",
+  "/admin/users": "User Management",
+  "/admin/departments": "Department Management",
+  "/admin/categories": "Category Management",
 };
 
 export function Header() {
   const pathname = usePathname();
   const { theme, toggle } = useTheme();
+  const unreadCount = trpc.notification.unreadCount.useQuery(undefined, { refetchInterval: 30000 });
   const segments = pathname?.split("/").filter(Boolean) || [];
   const pageName = pageNames[pathname || ""] || "EcoSphere";
 
@@ -72,7 +78,11 @@ export function Header() {
             className="relative p-2.5 rounded-xl bg-gray-100 dark:bg-gray-800 hover:bg-gray-200 dark:hover:bg-gray-700 transition-colors"
           >
             <Bell className="w-4 h-4 text-gray-600" />
-            <span className="absolute top-1.5 right-1.5 w-2 h-2 bg-red-500 rounded-full" />
+            {(unreadCount.data ?? 0) > 0 && (
+              <span className="absolute -top-1 -right-1 min-w-[18px] h-[18px] flex items-center justify-center rounded-full bg-red-500 text-white text-[10px] font-bold px-1">
+                {unreadCount.data! > 99 ? "99+" : unreadCount.data}
+              </span>
+            )}
           </Link>
         </div>
       </div>

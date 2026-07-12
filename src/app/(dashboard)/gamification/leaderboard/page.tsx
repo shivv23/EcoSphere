@@ -6,7 +6,7 @@ import { Zap } from "lucide-react";
 const medals = ["\uD83E\uDD47", "\uD83E\uDD48", "\uD83E\uDD49"];
 
 export default function LeaderboardPage() {
-  const { data: employees, isLoading } = trpc.user.xp.useQuery();
+  const { data: employees, isLoading } = trpc.user.xp.useQuery(undefined, { refetchInterval: 30000 });
 
   return (
     <div className="space-y-6">

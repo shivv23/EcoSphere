@@ -31,6 +31,7 @@ import {
   Truck,
   TreePine,
   Calendar,
+  ShieldCheck,
 } from "lucide-react";
 import { useState } from "react";
 
@@ -89,6 +90,16 @@ const navigation = [
   { name: "Compliance Calendar", href: "/calendar", icon: Calendar },
   { name: "Notifications", href: "/notifications", icon: Bell },
   { name: "Settings", href: "/settings", icon: Settings },
+  {
+    name: "Admin",
+    href: "/admin",
+    icon: ShieldCheck,
+    children: [
+      { name: "Users", href: "/admin/users" },
+      { name: "Departments", href: "/admin/departments" },
+      { name: "Categories", href: "/admin/categories" },
+    ],
+  },
   { name: "Onboarding", href: "/onboarding", icon: Rocket },
 ];
 
