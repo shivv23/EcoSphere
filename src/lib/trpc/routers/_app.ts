@@ -20,6 +20,11 @@ import { benchmarkRouter } from "./benchmark";
 import { widgetRouter } from "./widget";
 import { auditLogRouter } from "./auditLog";
 import { thresholdRouter } from "./threshold";
+import { recommendationRouter } from "./recommendation";
+import { timelineRouter } from "./timeline";
+import { supplierRouter } from "./supplier";
+import { offsetRouter } from "./offset";
+import { calendarRouter } from "./calendar";
 
 export const appRouter = router({
   department: departmentRouter,
@@ -43,6 +48,11 @@ export const appRouter = router({
   widget: widgetRouter,
   auditLog: auditLogRouter,
   threshold: thresholdRouter,
+  recommendation: recommendationRouter,
+  timeline: timelineRouter,
+  supplier: supplierRouter,
+  offset: offsetRouter,
+  calendar: calendarRouter,
 });
 
 export type AppRouter = typeof appRouter;

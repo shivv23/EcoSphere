@@ -561,3 +561,86 @@ model IndustryBenchmark {
 
   @@unique([industry, metric, year])
 }
+
+model Supplier {
+  id            String    @id @default(cuid())
+  name          String
+  contactEmail  String?
+  contactPerson String?
+  country       String?
+  category      String?
+  esgScore      Float     @default(0)
+  envScore      Float     @default(0)
+  socialScore   Float     @default(0)
+  govScore      Float     @default(0)
+  status        String    @default("ACTIVE")
+  notes         String?
+  createdAt     DateTime  @default(now())
+  updatedAt     DateTime  @updatedAt
+
+  assessments   SupplierAssessment[]
+}
+
+model SupplierAssessment {
+  id            String    @id @default(cuid())
+  assessmentDate DateTime @default(now())
+  envScore      Float
+  socialScore   Float
+  govScore      Float
+  totalScore    Float
+  notes         String?
+  assessorId    String
+  createdAt     DateTime  @default(now())
+
+  supplierId    String
+  supplier      Supplier  @relation(fields: [supplierId], references: [id])
+
+  @@index([supplierId])
+}
+
+model CarbonOffsetProject {
+  id            String    @id @default(cuid())
+  name          String
+  description   String
+  location      String
+  provider      String
+  pricePerTon   Float
+  totalTons     Float
+  availableTons Float
+  type          String
+  verified      Boolean   @default(false)
+  imageUrl      String?
+  status        String    @default("ACTIVE")
+  createdAt     DateTime  @default(now())
+  updatedAt     DateTime  @updatedAt
+
+  purchases     CarbonOffsetPurchase[]
+}
+
+model CarbonOffsetPurchase {
+  id            String    @id @default(cuid())
+  tonsPurchased Float
+  totalCost     Float
+  purchasedAt   DateTime  @default(now())
+  userId        String
+
+  projectId     String
+  project       CarbonOffsetProject @relation(fields: [projectId], references: [id])
+
+  @@index([userId])
+  @@index([projectId])
+}
+
+model TimelineEvent {
+  id            String    @id @default(cuid())
+  title         String
+  description   String
+  date          DateTime
+  category      String
+  impact        String?
+  icon          String?
+  createdAt     DateTime  @default(now())
+
+  @@index([date])
+  @@index([category])
+}

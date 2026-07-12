@@ -25,6 +25,11 @@ import {
   Rocket,
   History,
   Gauge,
+  Sparkles,
+  Clock,
+  Truck,
+  TreePine,
+  Calendar,
 } from "lucide-react";
 import { useState } from "react";
 
@@ -76,6 +81,11 @@ const navigation = [
   { name: "Data Import", href: "/import", icon: Upload },
   { name: "Audit Trail", href: "/audit-trail", icon: History },
   { name: "Thresholds", href: "/thresholds", icon: Gauge },
+  { name: "Recommendations", href: "/recommendations", icon: Sparkles },
+  { name: "Impact Timeline", href: "/timeline", icon: Clock },
+  { name: "Suppliers", href: "/suppliers", icon: Truck },
+  { name: "Carbon Offsets", href: "/offset", icon: TreePine },
+  { name: "Compliance Calendar", href: "/calendar", icon: Calendar },
   { name: "Notifications", href: "/notifications", icon: Bell },
   { name: "Settings", href: "/settings", icon: Settings },
   { name: "Onboarding", href: "/onboarding", icon: Rocket },
