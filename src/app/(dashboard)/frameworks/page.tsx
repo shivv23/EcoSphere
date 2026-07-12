@@ -186,7 +186,15 @@ export default function FrameworksPage() {
 
   return (
     <div className="space-y-6">
-      <div className="flex items-center justify-between">
+      <style>{`
+        @media print {
+          body * { visibility: hidden; }
+          .print-area, .print-area * { visibility: visible; }
+          .print-area { position: absolute; left: 0; top: 0; width: 100%; }
+          nav, header, .no-print { display: none !important; }
+        }
+      `}</style>
+      <div className="flex items-center justify-between no-print">
         <div>
           <h1 className="text-2xl font-bold text-gray-900 dark:text-white">ESG Reporting Frameworks</h1>
           <p className="text-gray-500 dark:text-gray-400 mt-1">Generate reports aligned with GRI, SASB, and TCFD standards</p>
@@ -304,7 +312,7 @@ export default function FrameworksPage() {
       </div>
 
       {/* Coverage Detail Table */}
-      <div className="bg-white dark:bg-gray-900 rounded-2xl border border-gray-100 dark:border-gray-800 shadow-sm overflow-hidden">
+      <div className="print-area bg-white dark:bg-gray-900 rounded-2xl border border-gray-100 dark:border-gray-800 shadow-sm overflow-hidden">
         <div className="px-6 py-4 border-b border-gray-100 dark:border-gray-800">
           <h3 className="font-semibold text-gray-900 dark:text-white">{selected} Metrics Detail</h3>
           <p className="text-sm text-gray-500 dark:text-gray-400 mt-1">{fw.full}</p>

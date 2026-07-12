@@ -37,6 +37,8 @@ import {
   Grid3X3,
   Globe,
   CalendarClock,
+  Activity,
+  FileCode,
 } from "lucide-react";
 import { useState } from "react";
 
@@ -95,6 +97,8 @@ const navigation = [
   { name: "Audit Trail", href: "/audit-trail", icon: History },
   { name: "Thresholds", href: "/thresholds", icon: Gauge },
   { name: "Recommendations", href: "/recommendations", icon: Sparkles },
+  { name: "Activity Feed", href: "/activity", icon: Activity },
+  { name: "API Docs", href: "/api-docs", icon: FileCode },
   { name: "Impact Timeline", href: "/timeline", icon: Clock },
   { name: "Suppliers", href: "/suppliers", icon: Truck },
   { name: "Carbon Offsets", href: "/offset", icon: TreePine },

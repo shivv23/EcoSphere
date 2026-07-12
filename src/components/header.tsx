@@ -1,6 +1,6 @@
 "use client";
 
-import { Bell, ChevronRight, Sun, Moon } from "lucide-react";
+import { Bell, ChevronRight, Sun, Moon, Search } from "lucide-react";
 import { usePathname } from "next/navigation";
 import Link from "next/link";
 import { useTheme } from "@/components/theme-provider";
@@ -53,6 +53,8 @@ const pageNames: Record<string, string> = {
   "/explorer": "Data Explorer",
   "/documents": "Document Center",
   "/audit-schedule": "Audit Scheduler",
+  "/activity": "Activity Feed",
+  "/api-docs": "API Documentation",
 };
 
 export function Header() {
@@ -80,6 +82,14 @@ export function Header() {
         </div>
 
         <div className="flex items-center gap-3">
+          <button
+            onClick={() => document.dispatchEvent(new KeyboardEvent("keydown", { key: "k", ctrlKey: true }))}
+            className="hidden md:flex items-center gap-2 px-3 py-2 rounded-xl bg-gray-100 dark:bg-gray-800 hover:bg-gray-200 dark:hover:bg-gray-700 transition-colors text-sm text-gray-400"
+          >
+            <Search className="w-4 h-4" />
+            <span>Search...</span>
+            <kbd className="ml-2 px-1.5 py-0.5 text-[10px] font-mono bg-gray-200 dark:bg-gray-700 rounded">Ctrl+K</kbd>
+          </button>
 
           <button
             onClick={toggle}
