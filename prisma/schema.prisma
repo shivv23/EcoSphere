@@ -1,0 +1,478 @@
+generator client {
+  provider = "prisma-client"
+  output   = "../src/generated/prisma"
+}
+
+datasource db {
+  provider = "postgresql"
+}
+
+// ─── ENUMS ───────────────────────────────────────────────
+
+enum UserRole {
+  ADMIN
+  MANAGER
+  EMPLOYEE
+}
+
+enum Gender {
+  MALE
+  FEMALE
+  NON_BINARY
+  PREFER_NOT_TO_SAY
+}
+
+enum ESGCategoryType {
+  CSR_ACTIVITY
+  CHALLENGE
+}
+
+enum ChallengeStatus {
+  DRAFT
+  ACTIVE
+  UNDER_REVIEW
+  COMPLETED
+  ARCHIVED
+}
+
+enum ApprovalStatus {
+  PENDING
+  APPROVED
+  REJECTED
+}
+
+enum ComplianceSeverity {
+  LOW
+  MEDIUM
+  HIGH
+  CRITICAL
+}
+
+enum ComplianceStatus {
+  OPEN
+  IN_PROGRESS
+  RESOLVED
+  CLOSED
+}
+
+enum NotificationType {
+  COMPLIANCE_ISSUE
+  CSR_APPROVAL
+  CHALLENGE_APPROVAL
+  POLICY_REMINDER
+  BADGE_UNLOCK
+  REWARD_REDEMPTION
+  GENERAL
+}
+
+enum NotificationChannel {
+  IN_APP
+  EMAIL
+  BOTH
+}
+
+// ─── MASTER DATA ─────────────────────────────────────────
+
+model User {
+  id            String    @id @default(cuid())
+  name          String
+  email         String    @unique
+  password      String
+  role          UserRole  @default(EMPLOYEE)
+  avatar        String?
+  phone         String?
+  hireDate      DateTime?
+  dateOfBirth   DateTime?
+  gender        Gender?
+  ethnicity     String?
+  disability    Boolean   @default(false)
+
+  departmentId  String?
+  department    Department? @relation(fields: [departmentId], references: [id])
+
+  xp            Int       @default(0)
+
+  createdAt     DateTime  @default(now())
+  updatedAt     DateTime  @updatedAt
+
+  // Relations
+  csrParticipations          EmployeeParticipation[]
+  challengeParticipations    ChallengeParticipation[]
+  policyAcknowledgements     PolicyAcknowledgement[]
+  badgeAssignments           BadgeAssignment[]
+  rewardRedemptions          RewardRedemption[]
+  notifications              Notification[]
+  createdActivities          CSRActivity[]
+  assignedComplianceIssues   ComplianceIssue[]        @relation("ComplianceOwner")
+  uploadedEvidence           Evidence[]
+
+  @@index([departmentId])
+  @@index([role])
+}
+
+model Department {
+  id            String    @id @default(cuid())
+  name          String    @unique
+  code          String    @unique
+  headId        String?
+  employeeCount Int       @default(0)
+  status        Boolean   @default(true)
+  createdAt     DateTime  @default(now())
+  updatedAt     DateTime  @updatedAt
+
+  head          User?     @relation(fields: [headId], references: [id])
+  users         User[]
+
+  carbonTransactions     CarbonTransaction[]
+  csrActivities          CSRActivity[]
+  departmentScores       DepartmentScore[]
+
+  @@index([status])
+}
+
+model Category {
+  id        String          @id @default(cuid())
+  name      String
+  type      ESGCategoryType
+  status    Boolean         @default(true)
+  createdAt DateTime        @default(now())
+  updatedAt DateTime        @updatedAt
+
+  csrActivities     CSRActivity[]
+  challenges        Challenge[]
+
+  @@unique([name, type])
+}
+
+model EmissionFactor {
+  id            String    @id @default(cuid())
+  name          String
+  source        String
+  factor        Float
+  unit          String
+  scope         Int       @default(1)
+  status        Boolean   @default(true)
+  createdAt     DateTime  @default(now())
+  updatedAt     DateTime  @updatedAt
+
+  carbonTransactions     CarbonTransaction[]
+
+  @@index([scope])
+}
+
+model ProductESGProfile {
+  id            String    @id @default(cuid())
+  name          String
+  sku           String    @unique
+  category      String?
+  carbonFootprint Float?
+  recyclable    Boolean   @default(false)
+  supplierESGRating Float?
+  status        Boolean   @default(true)
+  createdAt     DateTime  @default(now())
+  updatedAt     DateTime  @updatedAt
+
+  carbonTransactions     CarbonTransaction[]
+}
+
+model EnvironmentalGoal {
+  id            String    @id @default(cuid())
+  title         String
+  description   String?
+  targetValue   Float
+  currentValue  Float     @default(0)
+  unit          String
+  startDate     DateTime
+  endDate       DateTime
+  status        Boolean   @default(true)
+  createdAt     DateTime  @default(now())
+  updatedAt     DateTime  @updatedAt
+
+  @@index([startDate, endDate])
+}
+
+model ESGPolicy {
+  id            String    @id @default(cuid())
+  title         String
+  description   String
+  category      String    @default("General")
+  version       String    @default("1.0")
+  effectiveDate DateTime
+  reviewDate    DateTime?
+  status        Boolean   @default(true)
+  createdAt     DateTime  @default(now())
+  updatedAt     DateTime  @updatedAt
+
+  acknowledgements     PolicyAcknowledgement[]
+
+  @@index([category])
+}
+
+model Badge {
+  id            String    @id @default(cuid())
+  name          String    @unique
+  description   String
+  icon          String
+  xpThreshold   Int       @default(0)
+  challengeThreshold Int  @default(0)
+  tier          String    @default("Bronze")
+  status        Boolean   @default(true)
+  createdAt     DateTime  @default(now())
+  updatedAt     DateTime  @updatedAt
+
+  assignments         BadgeAssignment[]
+}
+
+model Reward {
+  id            String    @id @default(cuid())
+  name          String
+  description   String
+  pointsRequired Int
+  stock         Int       @default(0)
+  category      String    @default("General")
+  status        Boolean   @default(true)
+  createdAt     DateTime  @default(now())
+  updatedAt     DateTime  @updatedAt
+
+  redemptions         RewardRedemption[]
+
+  @@index([pointsRequired])
+}
+
+// ─── TRANSACTIONAL DATA ──────────────────────────────────
+
+model CarbonTransaction {
+  id            String    @id @default(cuid())
+  date          DateTime  @default(now())
+  source        String
+  quantity      Float
+  totalEmissions Float
+  scope         Int       @default(1)
+  notes         String?
+  createdAt     DateTime  @default(now())
+
+  departmentId  String
+  department    Department @relation(fields: [departmentId], references: [id])
+
+  emissionFactorId String?
+  emissionFactor   EmissionFactor? @relation(fields: [emissionFactorId], references: [id])
+
+  productESGProfileId String?
+  productESGProfile   ProductESGProfile? @relation(fields: [productESGProfileId], references: [id])
+
+  @@index([departmentId, date])
+  @@index([scope])
+}
+
+model CSRActivity {
+  id            String    @id @default(cuid())
+  title         String
+  description   String
+  date          DateTime  @default(now())
+  location      String?
+  organizerId   String
+  status        ApprovalStatus @default(PENDING)
+  createdAt     DateTime  @default(now())
+  updatedAt     DateTime  @updatedAt
+
+  departmentId  String
+  department    Department @relation(fields: [departmentId], references: [id])
+
+  categoryId    String
+  category      Category  @relation(fields: [categoryId], references: [id])
+
+  organizer     User      @relation(fields: [organizerId], references: [id])
+
+  participations EmployeeParticipation[]
+  evidence       Evidence[]
+
+  @@index([departmentId, date])
+  @@index([status])
+}
+
+model EmployeeParticipation {
+  id            String    @id @default(cuid())
+  pointsEarned  Int       @default(0)
+  completionDate DateTime?
+  status        ApprovalStatus @default(PENDING)
+  createdAt     DateTime  @default(now())
+  updatedAt     DateTime  @updatedAt
+
+  employeeId    String
+  employee      User      @relation(fields: [employeeId], references: [id])
+
+  activityId    String
+  activity      CSRActivity @relation(fields: [activityId], references: [id])
+
+  @@unique([employeeId, activityId])
+  @@index([employeeId])
+  @@index([activityId])
+}
+
+model Challenge {
+  id              String    @id @default(cuid())
+  title           String
+  description     String
+  xpReward        Int       @default(0)
+  difficulty      String    @default("Medium")
+  evidenceRequired Boolean  @default(false)
+  deadline        DateTime
+  status          ChallengeStatus @default(DRAFT)
+  maxParticipants Int?
+  createdAt       DateTime  @default(now())
+  updatedAt       DateTime  @updatedAt
+
+  categoryId      String
+  category        Category  @relation(fields: [categoryId], references: [id])
+
+  participations  ChallengeParticipation[]
+
+  @@index([status, deadline])
+  @@index([categoryId])
+}
+
+model ChallengeParticipation {
+  id            String    @id @default(cuid())
+  progress      Float     @default(0)
+  xpAwarded     Int       @default(0)
+  status        ApprovalStatus @default(PENDING)
+  startedAt     DateTime  @default(now())
+  completedAt   DateTime?
+  createdAt     DateTime  @default(now())
+  updatedAt     DateTime  @updatedAt
+
+  employeeId    String
+  employee      User      @relation(fields: [employeeId], references: [id])
+
+  challengeId   String
+  challenge     Challenge @relation(fields: [challengeId], references: [id])
+
+  @@unique([employeeId, challengeId])
+  @@index([employeeId])
+  @@index([challengeId])
+}
+
+model PolicyAcknowledgement {
+  id            String    @id @default(cuid())
+  acknowledgedAt DateTime @default(now())
+  dueDate       DateTime?
+  overdue       Boolean   @default(false)
+
+  employeeId    String
+  employee      User      @relation(fields: [employeeId], references: [id])
+
+  policyId      String
+  policy        ESGPolicy @relation(fields: [policyId], references: [id])
+
+  @@unique([employeeId, policyId])
+  @@index([employeeId])
+  @@index([policyId])
+}
+
+model Audit {
+  id            String    @id @default(cuid())
+  title         String
+  description   String?
+  auditDate     DateTime  @default(now())
+  score         Float?
+  status        String    @default("Scheduled")
+  createdAt     DateTime  @default(now())
+  updatedAt     DateTime  @updatedAt
+
+  complianceIssues ComplianceIssue[]
+
+  @@index([auditDate])
+}
+
+model ComplianceIssue {
+  id            String    @id @default(cuid())
+  title         String
+  description   String
+  severity      ComplianceSeverity @default(MEDIUM)
+  status        ComplianceStatus @default(OPEN)
+  dueDate       DateTime
+  resolvedAt    DateTime?
+  createdAt     DateTime  @default(now())
+  updatedAt     DateTime  @updatedAt
+
+  auditId       String?
+  audit         Audit?    @relation(fields: [auditId], references: [id])
+
+  ownerId       String
+  owner         User      @relation("ComplianceOwner", fields: [ownerId], references: [id])
+
+  @@index([ownerId, status])
+  @@index([severity, status])
+  @@index([dueDate])
+}
+
+model DepartmentScore {
+  id                String    @id @default(cuid())
+  month             Int
+  year              Int
+  environmentalScore Float   @default(0)
+  socialScore       Float     @default(0)
+  governanceScore   Float     @default(0)
+  totalScore        Float     @default(0)
+  calculatedAt      DateTime  @default(now())
+
+  departmentId      String
+  department        Department @relation(fields: [departmentId], references: [id])
+
+  @@unique([departmentId, month, year])
+  @@index([year, month])
+}
+
+model Notification {
+  id            String    @id @default(cuid())
+  title         String
+  message       String
+  type          NotificationType @default(GENERAL)
+  channel       NotificationChannel @default(IN_APP)
+  read          Boolean   @default(false)
+  link          String?
+  createdAt     DateTime  @default(now())
+
+  userId        String
+  user          User      @relation(fields: [userId], references: [id])
+
+  @@index([userId, read])
+  @@index([createdAt])
+}
+
+model Evidence {
+  id            String    @id @default(cuid())
+  fileName      String
+  fileUrl       String
+  fileType      String
+  fileSize      Int
+  uploadedAt    DateTime  @default(now())
+
+  uploaderId    String
+  uploader      User      @relation(fields: [uploaderId], references: [id])
+
+  activityId    String?
+  activity      CSRActivity? @relation(fields: [activityId], references: [id])
+
+  @@index([activityId])
+}
+
+model SystemSettings {
+  id            String    @id @default(cuid())
+  key           String    @unique
+  value         String
+  description   String?
+  updatedAt     DateTime  @updatedAt
+}
+
+model OrganizationProfile {
+  id            String    @id @default(cuid())
+  name          String
+  industry      String?
+  employeeCount Int?
+  envWeight     Float     @default(0.4)
+  socialWeight  Float     @default(0.3)
+  govWeight     Float     @default(0.3)
+  createdAt     DateTime  @default(now())
+  updatedAt     DateTime  @updatedAt
+}
