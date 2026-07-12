@@ -1,0 +1,19 @@
+
+> ecosphere@0.1.0 dev
+> next dev
+
+Γû▓ Next.js 16.2.10 (Turbopack)
+- Local:         http://localhost:3000
+- Network:       http://10.69.207.129:3000
+- Environments: .env
+Γ£ô Ready in 723ms
+
+ GET /login 200 in 2.5s (next.js: 2.2s, application-code: 321ms)
+ GET /register 200 in 512ms (next.js: 451ms, application-code: 61ms)
+ GET / 307 in 342ms (next.js: 292ms, application-code: 50ms)
+ GET /login 200 in 47ms (next.js: 7ms, application-code: 40ms)
+ GET /environmental 200 in 1156ms (next.js: 953ms, application-code: 203ms)
+ GET /social 200 in 660ms (next.js: 550ms, application-code: 110ms)
+ GET /governance 200 in 648ms (next.js: 542ms, application-code: 106ms)
+ GET /gamification 200 in 352ms (next.js: 296ms, application-code: 56ms)
+ GET /reports 200 in 727ms (next.js: 621ms, application-code: 106ms)

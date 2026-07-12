@@ -1,0 +1,7 @@
+Γû▓ Next.js 16.2.10 (Turbopack)
+- Local:         http://localhost:3000
+- Network:       http://10.69.207.129:3000
+- Environments: .env
+Γ£ô Ready in 715ms
+
+ GET /login 200 in 2.5s (next.js: 2.2s, application-code: 309ms)

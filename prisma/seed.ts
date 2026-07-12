@@ -6,27 +6,29 @@ const prisma = new PrismaClient();
 async function main() {
   console.log("Seeding EcoSphere database...");
 
-  // Clear existing data
-  await prisma.$executeRaw`TRUNCATE TABLE "EmployeeParticipation" CASCADE`;
-  await prisma.$executeRaw`TRUNCATE TABLE "ChallengeParticipation" CASCADE`;
-  await prisma.$executeRaw`TRUNCATE TABLE "PolicyAcknowledgement" CASCADE`;
-  await prisma.$executeRaw`TRUNCATE TABLE "BadgeAssignment" CASCADE`;
-  await prisma.$executeRaw`TRUNCATE TABLE "RewardRedemption" CASCADE`;
-  await prisma.$executeRaw`TRUNCATE TABLE "Notification" CASCADE`;
-  await prisma.$executeRaw`TRUNCATE TABLE "Evidence" CASCADE`;
-  await prisma.$executeRaw`TRUNCATE TABLE "ComplianceIssue" CASCADE`;
-  await prisma.$executeRaw`TRUNCATE TABLE "Audit" CASCADE`;
-  await prisma.$executeRaw`TRUNCATE TABLE "DepartmentScore" CASCADE`;
-  await prisma.$executeRaw`TRUNCATE TABLE "CarbonTransaction" CASCADE`;
-  await prisma.$executeRaw`TRUNCATE TABLE "CSRActivity" CASCADE`;
-  await prisma.$executeRaw`TRUNCATE TABLE "Challenge" CASCADE`;
-  await prisma.$executeRaw`TRUNCATE TABLE "ESGPolicy" CASCADE`;
-  await prisma.$executeRaw`TRUNCATE TABLE "Badge" CASCADE`;
-  await prisma.$executeRaw`TRUNCATE TABLE "Reward" CASCADE`;
-  await prisma.$executeRaw`TRUNCATE TABLE "EmissionFactor" CASCADE`;
-  await prisma.$executeRaw`TRUNCATE TABLE "Category" CASCADE`;
-  await prisma.$executeRaw`TRUNCATE TABLE "Department" CASCADE`;
-  await prisma.$executeRaw`TRUNCATE TABLE "User" CASCADE`;
+  // Clear existing data (reverse dependency order for MySQL)
+  await prisma.rewardRedemption.deleteMany();
+  await prisma.badgeAssignment.deleteMany();
+  await prisma.policyAcknowledgement.deleteMany();
+  await prisma.challengeParticipation.deleteMany();
+  await prisma.employeeParticipation.deleteMany();
+  await prisma.evidence.deleteMany();
+  await prisma.notification.deleteMany();
+  await prisma.complianceIssue.deleteMany();
+  await prisma.audit.deleteMany();
+  await prisma.departmentScore.deleteMany();
+  await prisma.carbonTransaction.deleteMany();
+  await prisma.cSRActivity.deleteMany();
+  await prisma.challenge.deleteMany();
+  await prisma.eSGPolicy.deleteMany();
+  await prisma.badge.deleteMany();
+  await prisma.reward.deleteMany();
+  await prisma.emissionFactor.deleteMany();
+  await prisma.category.deleteMany();
+  await prisma.organizationProfile.deleteMany();
+  await prisma.systemSettings.deleteMany();
+  await prisma.department.deleteMany();
+  await prisma.user.deleteMany();
 
   const password = await bcrypt.hash("admin123", 12);
   const userPass = await bcrypt.hash("user123", 12);
