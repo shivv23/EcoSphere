@@ -1,5 +1,5 @@
 {
-  "name": "ecosphere-temp",
+  "name": "ecosphere",
   "version": "0.1.0",
   "private": true,
   "scripts": {
@@ -44,9 +44,11 @@
     "@types/react": "^19",
     "@types/react-dom": "^19",
     "@types/uuid": "^10.0.0",
+    "dotenv": "^17.4.2",
     "eslint": "^9",
     "eslint-config-next": "16.2.10",
     "tailwindcss": "^4",
+    "tsx": "^4.23.0",
     "typescript": "^5"
   }
 }

@@ -1,6 +1,5 @@
 generator client {
-  provider = "prisma-client"
-  output   = "../src/generated/prisma"
+  provider = "prisma-client-js"
 }
 
 datasource db {
@@ -88,7 +87,7 @@ model User {
   disability    Boolean   @default(false)
 
   departmentId  String?
-  department    Department? @relation(fields: [departmentId], references: [id])
+  department    Department? @relation("DeptMembers", fields: [departmentId], references: [id])
 
   xp            Int       @default(0)
 
@@ -96,6 +95,7 @@ model User {
   updatedAt     DateTime  @updatedAt
 
   // Relations
+  headedDepartment         Department? @relation("DeptHead")
   csrParticipations          EmployeeParticipation[]
   challengeParticipations    ChallengeParticipation[]
   policyAcknowledgements     PolicyAcknowledgement[]
@@ -114,14 +114,14 @@ model Department {
   id            String    @id @default(cuid())
   name          String    @unique
   code          String    @unique
-  headId        String?
+  headId        String?   @unique
   employeeCount Int       @default(0)
   status        Boolean   @default(true)
   createdAt     DateTime  @default(now())
   updatedAt     DateTime  @updatedAt
 
-  head          User?     @relation(fields: [headId], references: [id])
-  users         User[]
+  head          User?     @relation("DeptHead", fields: [headId], references: [id])
+  users         User[]   @relation("DeptMembers")
 
   carbonTransactions     CarbonTransaction[]
   csrActivities          CSRActivity[]
@@ -455,6 +455,33 @@ model Evidence {
   activity      CSRActivity? @relation(fields: [activityId], references: [id])
 
   @@index([activityId])
+}
+
+model BadgeAssignment {
+  id            String    @id @default(cuid())
+  assignedAt    DateTime  @default(now())
+
+  employeeId    String
+  employee      User      @relation(fields: [employeeId], references: [id])
+
+  badgeId       String
+  badge         Badge     @relation(fields: [badgeId], references: [id])
+
+  @@unique([employeeId, badgeId])
+}
+
+model RewardRedemption {
+  id            String    @id @default(cuid())
+  pointsSpent   Int
+  redeemedAt    DateTime  @default(now())
+
+  employeeId    String
+  employee      User      @relation(fields: [employeeId], references: [id])
+
+  rewardId      String
+  reward        Reward    @relation(fields: [rewardId], references: [id])
+
+  @@unique([employeeId, rewardId])
 }
 
 model SystemSettings {
