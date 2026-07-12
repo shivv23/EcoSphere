@@ -87,13 +87,19 @@ const PRIORITY_BADGE: Record<string, string> = {
   LOW: "bg-gray-100 text-gray-600",
 };
 
+function daysFromNow(days: number): string {
+  const d = new Date();
+  d.setDate(d.getDate() + days);
+  return d.toISOString().split("T")[0];
+}
+
 const SEED_DATA: AuditSchedule[] = [
   {
     id: "seed-1",
     title: "Quarterly Safety Audit",
     type: "INTERNAL",
     frequency: "QUARTERLY",
-    nextDate: "2026-07-15",
+    nextDate: daysFromNow(3),
     department: "Operations",
     auditor: "Safety Team",
     status: "SCHEDULED",
@@ -105,7 +111,7 @@ const SEED_DATA: AuditSchedule[] = [
     title: "Annual Financial Audit",
     type: "EXTERNAL",
     frequency: "ANNUAL",
-    nextDate: "2026-09-01",
+    nextDate: daysFromNow(60),
     department: "Finance",
     auditor: "External Auditors",
     status: "SCHEDULED",
@@ -117,7 +123,7 @@ const SEED_DATA: AuditSchedule[] = [
     title: "Monthly Compliance Check",
     type: "REGULATORY",
     frequency: "MONTHLY",
-    nextDate: "2026-07-20",
+    nextDate: daysFromNow(7),
     department: "Legal",
     auditor: "Compliance Officer",
     status: "SCHEDULED",
@@ -129,7 +135,7 @@ const SEED_DATA: AuditSchedule[] = [
     title: "Semi-annual Supplier Audit",
     type: "SUPPLIER",
     frequency: "SEMI_ANNUAL",
-    nextDate: "2026-08-10",
+    nextDate: daysFromNow(30),
     department: "Procurement",
     auditor: "Procurement Team",
     status: "SCHEDULED",
@@ -141,7 +147,7 @@ const SEED_DATA: AuditSchedule[] = [
     title: "Annual Environmental Audit",
     type: "INTERNAL",
     frequency: "ANNUAL",
-    nextDate: "2026-10-01",
+    nextDate: daysFromNow(90),
     department: "Sustainability",
     auditor: "Environmental Lead",
     status: "SCHEDULED",
@@ -153,7 +159,7 @@ const SEED_DATA: AuditSchedule[] = [
     title: "Quarterly Data Privacy Audit",
     type: "REGULATORY",
     frequency: "QUARTERLY",
-    nextDate: "2026-07-25",
+    nextDate: daysFromNow(14),
     department: "IT",
     auditor: "IT Security Team",
     status: "SCHEDULED",
@@ -165,7 +171,7 @@ const SEED_DATA: AuditSchedule[] = [
     title: "Monthly Fire Safety Inspection",
     type: "INTERNAL",
     frequency: "MONTHLY",
-    nextDate: "2026-07-08",
+    nextDate: daysFromNow(1),
     department: "Facilities",
     auditor: "Fire Marshal Office",
     status: "SCHEDULED",

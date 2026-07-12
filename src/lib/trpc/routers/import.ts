@@ -2,7 +2,7 @@ import { router, protectedProcedure } from "@/lib/trpc/server";
 import { z } from "zod";
 import bcrypt from "bcryptjs";
 
-const DEFAULT_PASSWORD_HASH = bcrypt.hashSync("changeme123", 12);
+const DEFAULT_PASSWORD_HASH = bcrypt.hashSync("Temp@12345", 12);
 
 export const importRouter = router({
   importData: protectedProcedure
