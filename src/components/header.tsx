@@ -48,6 +48,11 @@ const pageNames: Record<string, string> = {
   "/risk": "Risk Assessment",
   "/simulator": "ESG Simulator",
   "/deadlines": "Deadline Tracker",
+  "/materiality": "Materiality Matrix",
+  "/stakeholder": "Stakeholder Portal",
+  "/explorer": "Data Explorer",
+  "/documents": "Document Center",
+  "/audit-schedule": "Audit Scheduler",
 };
 
 export function Header() {

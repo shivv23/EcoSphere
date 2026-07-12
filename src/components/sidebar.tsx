@@ -34,6 +34,9 @@ import {
   ShieldCheck,
   BookOpen,
   AlertTriangle,
+  Grid3X3,
+  Globe,
+  CalendarClock,
 } from "lucide-react";
 import { useState } from "react";
 
@@ -95,6 +98,11 @@ const navigation = [
   { name: "Impact Timeline", href: "/timeline", icon: Clock },
   { name: "Suppliers", href: "/suppliers", icon: Truck },
   { name: "Carbon Offsets", href: "/offset", icon: TreePine },
+  { name: "Materiality Matrix", href: "/materiality", icon: Grid3X3 },
+  { name: "Stakeholder Portal", href: "/stakeholder", icon: Globe },
+  { name: "Data Explorer", href: "/explorer", icon: BarChart3 },
+  { name: "Documents", href: "/documents", icon: FileText },
+  { name: "Audit Scheduler", href: "/audit-schedule", icon: CalendarClock },
   { name: "Compliance Calendar", href: "/calendar", icon: Calendar },
   { name: "Notifications", href: "/notifications", icon: Bell },
   { name: "Settings", href: "/settings", icon: Settings },
