@@ -25,14 +25,14 @@ export const reportRouter = router({
       if (input.type === "GOVERNANCE") {
         const policies = await ctx.db.eSGPolicy.findMany({ include: { _count: { select: { acknowledgements: true } } } });
         const audits = await ctx.db.audit.findMany();
-        const issues = await ctx.db.complianceIssue.findMany({ where: deptFilter });
+        const issues = await ctx.db.complianceIssue.findMany({});
         return { type: "GOVERNANCE", totalPolicies: policies.length, totalAudits: audits.length, openIssues: issues.filter(i => i.status === "OPEN").length, policies, audits, issues };
       }
       // SUMMARY
       const [carbon, csr, issues, policies, audits] = await Promise.all([
         ctx.db.carbonTransaction.aggregate({ where: deptFilter, _sum: { totalEmissions: true } }),
         ctx.db.cSRActivity.findMany({ where: deptFilter, include: { participations: true } }),
-        ctx.db.complianceIssue.findMany({ where: deptFilter }),
+        ctx.db.complianceIssue.findMany({}),
         ctx.db.eSGPolicy.count(),
         ctx.db.audit.count(),
       ]);

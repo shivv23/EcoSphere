@@ -2,7 +2,7 @@
 
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { useSession } from "next-auth/react";
+import { useSession, signOut } from "next-auth/react";
 import { cn } from "@/lib/utils";
 import {
   LayoutDashboard,
@@ -53,6 +53,7 @@ const navigation = [
     icon: Users,
     children: [
       { name: "CSR Activities", href: "/social/csr" },
+      { name: "CSR Approval", href: "/social/csr/approve" },
       { name: "Participation", href: "/social/participation" },
       { name: "Diversity", href: "/social/diversity" },
     ],
@@ -73,6 +74,7 @@ const navigation = [
     icon: Trophy,
     children: [
       { name: "Challenges", href: "/gamification/challenges" },
+      { name: "Challenge Approval", href: "/gamification/challenges/approve" },
       { name: "Badges", href: "/gamification/badges" },
       { name: "Rewards", href: "/gamification/rewards" },
       { name: "Leaderboard", href: "/gamification/leaderboard" },
@@ -207,7 +209,7 @@ function SidebarContent({ onNavigate }: { onNavigate?: () => void }) {
             <p className="text-sm font-medium text-white truncate">{userName}</p>
             <p className="text-xs text-slate-400 truncate">{userEmail}</p>
           </div>
-          <button className="p-1.5 rounded-lg text-slate-400 hover:text-white hover:bg-slate-700/50 transition-colors">
+          <button onClick={() => signOut({ callbackUrl: "/login" })} className="p-1.5 rounded-lg text-slate-400 hover:text-white hover:bg-slate-700/50 transition-colors">
             <LogOut className="w-4 h-4" />
           </button>
         </div>

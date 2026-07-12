@@ -14,6 +14,7 @@ const pageNames: Record<string, string> = {
   "/environmental/goals": "Environmental Goals",
   "/social": "Social",
   "/social/csr": "CSR Activities",
+  "/social/csr/approve": "CSR Approval",
   "/social/participation": "Employee Participation",
   "/social/diversity": "Diversity Metrics",
   "/governance": "Governance",
@@ -22,6 +23,7 @@ const pageNames: Record<string, string> = {
   "/governance/compliance": "Compliance Issues",
   "/gamification": "Gamification",
   "/gamification/challenges": "Challenges",
+  "/gamification/challenges/approve": "Challenge Approval",
   "/gamification/badges": "Badges",
   "/gamification/rewards": "Rewards",
   "/gamification/leaderboard": "Leaderboard",
@@ -32,6 +34,16 @@ const pageNames: Record<string, string> = {
   "/admin/users": "User Management",
   "/admin/departments": "Department Management",
   "/admin/categories": "Category Management",
+  "/benchmarking": "Industry Benchmarking",
+  "/import": "Data Import",
+  "/audit-trail": "Audit Trail",
+  "/thresholds": "Alert Thresholds",
+  "/recommendations": "Recommendations",
+  "/timeline": "Impact Timeline",
+  "/suppliers": "Supplier Directory",
+  "/offset": "Carbon Offsets",
+  "/calendar": "Compliance Calendar",
+  "/onboarding": "Onboarding",
 };
 
 export function Header() {

@@ -35,15 +35,16 @@ export default function ReportsPage() {
 
   const exportCSV = () => {
     if (!report) return;
+    const r = report as any;
     let csv = "";
-    if (report.type === "SUMMARY") {
-      csv = "Metric,Value\nTotal Emissions (tCO2e)," + report.totalEmissions + "\nCSR Activities," + report.totalCSR + "\nTotal Participation," + report.totalParticipation + "\nOpen Issues," + report.openIssues + "\nPolicies," + report.totalPolicies + "\nAudits," + report.totalAudits;
-    } else if (report.type === "ENVIRONMENTAL") {
-      csv = "Metric,Value\nTotal Emissions," + report.totalEmissions + "\nScope 1," + report.byScope.scope1 + "\nScope 2," + report.byScope.scope2 + "\nScope 3," + report.byScope.scope3 + "\nTransactions," + report.transactionCount;
-    } else if (report.type === "SOCIAL") {
-      csv = "Metric,Value\nTotal Activities," + report.totalActivities + "\nTotal Participants," + report.totalParticipants + "\nTotal Points," + report.totalPoints;
+    if (r.type === "SUMMARY") {
+      csv = "Metric,Value\nTotal Emissions (tCO2e)," + r.totalEmissions + "\nCSR Activities," + r.totalCSR + "\nTotal Participation," + r.totalParticipation + "\nOpen Issues," + r.openIssues + "\nPolicies," + r.totalPolicies + "\nAudits," + r.totalAudits;
+    } else if (r.type === "ENVIRONMENTAL") {
+      csv = "Metric,Value\nTotal Emissions," + r.totalEmissions + "\nScope 1," + r.byScope.scope1 + "\nScope 2," + r.byScope.scope2 + "\nScope 3," + r.byScope.scope3 + "\nTransactions," + r.transactionCount;
+    } else if (r.type === "SOCIAL") {
+      csv = "Metric,Value\nTotal Activities," + r.totalActivities + "\nTotal Participants," + r.totalParticipants + "\nTotal Points," + r.totalPoints;
     } else {
-      csv = "Metric,Value\nPolicies," + report.totalPolicies + "\nAudits," + report.totalAudits + "\nOpen Issues," + report.openIssues;
+      csv = "Metric,Value\nPolicies," + r.totalPolicies + "\nAudits," + r.totalAudits + "\nOpen Issues," + r.openIssues;
     }
     const blob = new Blob([csv], { type: "text/csv" });
     const url = URL.createObjectURL(blob);

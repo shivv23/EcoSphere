@@ -1,6 +1,6 @@
 import { router, protectedProcedure } from "@/lib/trpc/server";
 import { z } from "zod";
-import { checkAndAwardBadges } from "@/lib/scoring";
+import { checkAndAwardBadges, calculateDepartmentScores } from "@/lib/scoring";
 
 export const csrActivityRouter = router({
   list: protectedProcedure.input(z.object({ departmentId: z.string().optional() }).optional()).query(async ({ ctx, input }) => {
@@ -34,6 +34,10 @@ export const csrActivityRouter = router({
       if (input.status === "APPROVED") {
         await ctx.db.user.update({ where: { id: activity.organizerId }, data: { xp: { increment: 25 } } });
         await checkAndAwardBadges(activity.organizerId);
+        if (activity.departmentId) {
+          const now = new Date();
+          await calculateDepartmentScores(activity.departmentId, now.getMonth() + 1, now.getFullYear());
+        }
       }
 
       await ctx.db.notification.create({
@@ -43,7 +47,7 @@ export const csrActivityRouter = router({
           message: input.status === "APPROVED"
             ? `Your CSR activity "${activity.title}" has been approved! +25 XP awarded.`
             : `Your CSR activity "${activity.title}" has been rejected.`,
-          type: input.status === "APPROVED" ? "ACTIVITY_APPROVED" : "ACTIVITY_REJECTED",
+          type: input.status === "APPROVED" ? "CSR_APPROVAL" : "GENERAL",
           link: "/social/csr",
         },
       });

@@ -26,6 +26,7 @@ import { timelineRouter } from "./timeline";
 import { supplierRouter } from "./supplier";
 import { offsetRouter } from "./offset";
 import { calendarRouter } from "./calendar";
+import { registerRouter } from "./register";
 
 export const appRouter = router({
   goal: goalRouter,
@@ -55,6 +56,7 @@ export const appRouter = router({
   supplier: supplierRouter,
   offset: offsetRouter,
   calendar: calendarRouter,
+  register: registerRouter,
 });
 
 export type AppRouter = typeof appRouter;

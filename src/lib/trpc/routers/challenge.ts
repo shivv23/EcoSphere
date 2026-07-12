@@ -1,6 +1,6 @@
 import { router, protectedProcedure } from "@/lib/trpc/server";
 import { z } from "zod";
-import { checkAndAwardBadges } from "@/lib/scoring";
+import { checkAndAwardBadges, calculateDepartmentScores } from "@/lib/scoring";
 
 export const challengeRouter = router({
   list: protectedProcedure.input(z.object({ status: z.enum(["DRAFT", "ACTIVE", "UNDER_REVIEW", "COMPLETED", "ARCHIVED"]).optional() }).optional()).query(async ({ ctx, input }) => {
@@ -36,6 +36,11 @@ export const challengeRouter = router({
     if (input.status === "APPROVED" && input.xpAwarded) {
       await ctx.db.user.update({ where: { id: participation.employeeId }, data: { xp: { increment: input.xpAwarded } } });
       await checkAndAwardBadges(participation.employeeId);
+      const user = await ctx.db.user.findUnique({ where: { id: participation.employeeId }, select: { departmentId: true } });
+      if (user?.departmentId) {
+        const now = new Date();
+        await calculateDepartmentScores(user.departmentId, now.getMonth() + 1, now.getFullYear());
+      }
     }
 
     await ctx.db.notification.create({
@@ -45,7 +50,7 @@ export const challengeRouter = router({
         message: input.status === "APPROVED"
           ? `Your challenge participation was approved! +${input.xpAwarded || 0} XP awarded.`
           : `Your challenge participation was rejected.`,
-        type: input.status === "APPROVED" ? "CHALLENGE_APPROVED" : "CHALLENGE_REJECTED",
+        type: input.status === "APPROVED" ? "CHALLENGE_APPROVAL" : "GENERAL",
         link: "/gamification/challenges",
       },
     });
