@@ -32,6 +32,8 @@ import {
   TreePine,
   Calendar,
   ShieldCheck,
+  BookOpen,
+  AlertTriangle,
 } from "lucide-react";
 import { useState } from "react";
 
@@ -82,6 +84,10 @@ const navigation = [
   },
   { name: "Benchmarking", href: "/benchmarking", icon: Award },
   { name: "Reports", href: "/reports", icon: FileText },
+  { name: "Frameworks", href: "/frameworks", icon: BookOpen },
+  { name: "Risk Matrix", href: "/risk", icon: AlertTriangle },
+  { name: "Simulator", href: "/simulator", icon: Target },
+  { name: "Deadlines", href: "/deadlines", icon: Clock },
   { name: "Data Import", href: "/import", icon: Upload },
   { name: "Audit Trail", href: "/audit-trail", icon: History },
   { name: "Thresholds", href: "/thresholds", icon: Gauge },

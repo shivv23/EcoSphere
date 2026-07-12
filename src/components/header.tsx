@@ -44,6 +44,10 @@ const pageNames: Record<string, string> = {
   "/offset": "Carbon Offsets",
   "/calendar": "Compliance Calendar",
   "/onboarding": "Onboarding",
+  "/frameworks": "ESG Frameworks",
+  "/risk": "Risk Assessment",
+  "/simulator": "ESG Simulator",
+  "/deadlines": "Deadline Tracker",
 };
 
 export function Header() {

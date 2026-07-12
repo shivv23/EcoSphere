@@ -5,6 +5,7 @@ import { trpc } from "@/lib/trpc/client";
 import { FileText, Download, Filter, Leaf, Users, Shield, BarChart3, Loader2, FileSpreadsheet, FileDown, FileDown as PdfIcon } from "lucide-react";
 import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, PieChart, Pie, Cell, Legend } from "recharts";
 import { jsPDF } from "jspdf";
+import * as XLSX from "xlsx";
 import html2canvas from "html2canvas";
 
 type ReportType = "ENVIRONMENTAL" | "SOCIAL" | "GOVERNANCE" | "SUMMARY";
@@ -66,6 +67,46 @@ export default function ReportsPage() {
     URL.revokeObjectURL(url);
   };
 
+  const exportExcel = () => {
+    if (!report) return;
+    const r = report as any;
+    let rows: Record<string, any>[] = [];
+    if (r.type === "SUMMARY") {
+      rows = [
+        { Metric: "Total Emissions (tCO2e)", Value: r.totalEmissions },
+        { Metric: "CSR Activities", Value: r.totalCSR },
+        { Metric: "Total Participation", Value: r.totalParticipation },
+        { Metric: "Open Issues", Value: r.openIssues },
+        { Metric: "Policies", Value: r.totalPolicies },
+        { Metric: "Audits", Value: r.totalAudits },
+      ];
+    } else if (r.type === "ENVIRONMENTAL") {
+      rows = [
+        { Metric: "Total Emissions", Value: r.totalEmissions },
+        { Metric: "Scope 1", Value: r.byScope?.scope1 },
+        { Metric: "Scope 2", Value: r.byScope?.scope2 },
+        { Metric: "Scope 3", Value: r.byScope?.scope3 },
+        { Metric: "Transactions", Value: r.transactionCount },
+      ];
+    } else if (r.type === "SOCIAL") {
+      rows = [
+        { Metric: "Total Activities", Value: r.totalActivities },
+        { Metric: "Total Participants", Value: r.totalParticipants },
+        { Metric: "Total Points", Value: r.totalPoints },
+      ];
+    } else {
+      rows = [
+        { Metric: "Policies", Value: r.totalPolicies },
+        { Metric: "Audits", Value: r.totalAudits },
+        { Metric: "Open Issues", Value: r.openIssues },
+      ];
+    }
+    const wb = XLSX.utils.book_new();
+    const ws = XLSX.utils.json_to_sheet(rows);
+    XLSX.utils.book_append_sheet(wb, ws, "Report");
+    XLSX.writeFile(wb, `EcoSphere-${reportType.toLowerCase()}-report.xlsx`);
+  };
+
   const exportPDF = async () => {
     if (!reportRef.current || !report) return;
     setPdfLoading(true);
@@ -106,6 +147,9 @@ export default function ReportsPage() {
         <div className="flex gap-2">
           <button onClick={exportCSV} disabled={!report} className="flex items-center gap-2 px-4 py-2 bg-emerald-50 text-emerald-600 rounded-xl text-sm font-medium hover:bg-emerald-100 transition-colors disabled:opacity-50"><FileSpreadsheet className="w-4 h-4" />Export CSV</button>
           <button onClick={exportJSON} disabled={!report} className="flex items-center gap-2 px-4 py-2 bg-blue-50 text-blue-600 rounded-xl text-sm font-medium hover:bg-blue-100 transition-colors disabled:opacity-50"><FileDown className="w-4 h-4" />Export JSON</button>
+          <button onClick={exportExcel} disabled={!report} className="flex items-center gap-2 px-4 py-2 bg-indigo-50 text-indigo-600 rounded-xl text-sm font-medium hover:bg-indigo-100 transition-colors disabled:opacity-50">
+            <FileSpreadsheet className="w-4 h-4" />Export Excel
+          </button>
           <button onClick={exportPDF} disabled={!report || pdfLoading} className="flex items-center gap-2 px-4 py-2 bg-red-50 text-red-600 rounded-xl text-sm font-medium hover:bg-red-100 transition-colors disabled:opacity-50">
             {pdfLoading ? <Loader2 className="w-4 h-4 animate-spin" /> : <FileDown className="w-4 h-4" />}
             {pdfLoading ? "Generating..." : "Download PDF"}
